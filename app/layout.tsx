@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   alternates: { canonical: '/', types: { 'application/rss+xml': [{ url: '/rss.xml', title: `${BRAND} 지역별 커튼·블라인드` }] } },
   openGraph: { type: 'website', siteName: BRAND, locale: 'ko_KR', images: ['/images/ba-a-after.webp'] },
-  // TODO: 서치어드바이저·서치콘솔 소유확인 코드
+  verification: { google: 'HuaVUJokrR1aDCnadVolKFG9SqlpeE0Sy-z_4k39q-w', other: { 'naver-site-verification': '56ebb88c78c237418e0104cc6fde8862cb676785' } },
 };
 
 export const viewport: Viewport = { themeColor: '#ffffff', width: 'device-width', initialScale: 1 };

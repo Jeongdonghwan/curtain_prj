@@ -83,5 +83,5 @@ curtainmaster.co.kr(커튼명장)을 바탕으로 한 메인 홈 + 서울·경�
 ## 확인 필요
 
 - [x] SEO 사이트 도메인 https://curtainblind.co.kr (2026-10-30, 서버 172.237.20.244 /var/www/curtain)
-- [ ] 서치어드바이저·서치콘솔 소유확인 코드
+- [x] 서치어드바이저·서치콘솔 소유확인 코드 (2026-10-30, app/layout.tsx verification)
 - [ ] 실제 시공 지역(아파트명) 사례 목록 — 있으면 동 페이지 보강에 사용
