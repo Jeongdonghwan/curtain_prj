@@ -4,7 +4,7 @@
 
 ## 현재 상태 (2026-10-27)
 - 전국 커튼·블라인드 키워드 31,023개(`keywords/커튼블라인드_전국키워드.xlsx`) 중 서울·경기 5,982페이지가 빌드됨. 1단계(시군구) 1,806 → 2·3단계(동) 순차 오픈.
-- 로컬 확인: `OPEN_WAVE=3 npx next build`(기본값 1은 1단계만) 후 `cd out && python -I -m http.server 18933 --bind 127.0.0.1`
+- 로컬 확인: `OPEN_WAVE=31 npx next build`(전체, 기본값 1은 오픈일 묶음만) 후 `cd out && python -I -m http.server 18933 --bind 127.0.0.1`
 - 색인 지표(`python -I scripts/dup_check.py`): 같은 문장 25%, 같은 구 안 동 페이지끼리 21%(이전 49%) — 둘 다 30% 이하 통과. 바이그램 0.52.
 - 동 페이지에 K-apt 단지 + 행정안전부 주민등록 세대 사실을 붙임 (`data/dong-apts.json`, `scripts/build_dong_apts.py`).
 

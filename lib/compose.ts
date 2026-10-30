@@ -3,7 +3,7 @@
 //           data/dong-apts.json(동별 공동주택 단지 — K-apt 단지 기본정보).
 // 하지 않는 것: 없는 할인·없는 보증 기간·출처 없는 숫자, 블라인드 가격(공식몰에 상품이 없어 상담으로 안내).
 import { Page, Product, PRODUCTS, ALL_PAGES, factsOf, aptsOf, hash } from './data';
-import { BRAND, CONTACT, FACTS } from './site';
+import { BRAND, CONTACT, FACTS, BUSINESS } from './site';
 import { j } from './ko';
 
 type Topic = 'curtain' | 'blackout' | 'blind' | 'motor';
@@ -160,9 +160,11 @@ export function compose(p: Page) {
   const intro = [i1, aptLines.length ? `${aptLines[0]} ${pick([`${dong}에서도 ${f.room} 창 상담이 가장 많습니다.`, `${named.split('·')[0]} 같은 단지 창은 평형별로 가로 길이가 비슷해 사이즈 고르기가 쉽습니다.`], s, 'p2a')}` : noAptLine || hhLines[0] || pick(P2, s, 'p2'), i2];
 
   // ---- 같은 상위 지역의 다른 동네 (페이지마다 다른 고유 문장) ----
-  const nearby = rotate(Array.from(new Set(ALL_PAGES.filter((x) => x.parent === p.parent && (x.level === '동' || x.level === '읍면') && x.region !== place)
+  // 동 페이지의 parent 는 구·시 짧은 이름(용산). 구·시 페이지는 자기 이름으로 찾아야 남의 구 동네가 안 섞인다
+  const nearParent = dongLevel ? p.parent : place.replace(/^(서울|경기) /, '').replace(/(구|시|군)$/, '');
+  const nearby = rotate(Array.from(new Set(ALL_PAGES.filter((x) => x.parent === nearParent && (x.level === '동' || x.level === '읍면') && x.region !== place)
     .map((x) => x.region.split(' ').slice(-1)[0]))), s, 'near').slice(0, 4);
-  const nearApt = (d: string) => { const q = ALL_PAGES.find((x) => x.parent === p.parent && x.region.split(' ').slice(-1)[0] === d); const c = q && aptsOf(q)?.complexes?.[0]; return c ? `${d}(${c.name})` : d; };
+  const nearApt = (d: string) => { const q = ALL_PAGES.find((x) => x.parent === nearParent && x.region.split(' ').slice(-1)[0] === d); const c = q && aptsOf(q)?.complexes?.[0]; return c ? `${d}(${c.name})` : d; };
   const nearLine = nearby.length >= 3
     ? (dongLevel ? `같은 ${f.name} 안 ${nearby.slice(0, 3).map(nearApt).join('·')}에서도 같은 기준으로 맞춥니다.` : `${f.name} 안에서는 ${nearby.join('·')} 같은 동네 상담이 꾸준합니다.`)
     : '';
@@ -303,6 +305,118 @@ export function compose(p: Page) {
   const pool = t === 'blind' || /업체/.test(p.word) ? BLIND_CASES : HOME_CASES;
   const cases = rotate(pool, s, 'case').slice(0, 5).map((n) => `/images/case-${String(n).padStart(2, '0')}.webp`);
 
+  // ---- 커튼집·설치 키워드 — 같은 동 '커튼'·'블라인드' 페이지와 섹션이 겹치지 않게 의도별 내용으로 바꾼다 ----
+  // 사실 근거는 위와 같다(공식몰 표기·FACTS·BUSINESS). 설치 순서·확인 항목은 일반적인 시공 기준 문장이라 숫자를 넣지 않는다.
+  const kind = /설치/.test(p.word) ? 'install' : /커튼집/.test(p.word) ? 'shop' : '';
+  const thing = t === 'blind' ? '블라인드' : '커튼';
+  const rail = t === 'blind' ? '브래킷' : '레일';
+  const aptHint = newC && newC.year! >= 2010 ? `${newC.name}(${newC.year}년)처럼 최근 단지는 커튼박스 깊이와 천장 매립 레일 여부부터 봅니다.`
+    : oldC && oldC.year! < 2000 ? `${oldC.name}(${oldC.year}년)처럼 오래된 단지는 커튼박스가 얕거나 없을 수 있어 ${rail} 달 자리부터 봅니다.` : '';
+  const checks = (pool: [string, string][], salt: string) => rotate(pool, s, salt).slice(0, 4).map(([room, text], i) => ({ room, text: i === 0 && aptHint ? `${text} ${aptHint}` : text }));
+  const INSTALL_CHECKS: Record<'curtain' | 'blind', [string, string][]> = {
+    curtain: [
+      ['레일 위치', `${dong} 집에 커튼박스가 있으면 박스 안 천장에, 없으면 창틀 위 벽에 레일을 답니다. 레일 위치가 정해져야 커튼 세로 길이가 정해집니다.`],
+      ['가로 재기', `${f.room} 창도 창틀 폭이 아니라 레일을 달 자리의 길이를 잽니다. 양옆을 넉넉히 잡아야 커튼을 젖혔을 때 창이 다 드러납니다.`],
+      ['세로 재기', `${dong} 집 천장 높이대로 레일에서 바닥까지 잽니다. 바닥에 닿게 할지 살짝 띄울지 정해 두면 해피콜 상담에서 높이를 그대로 맞춥니다.`],
+      ['천장 재질', `${area} 집 천장이 콘크리트면 드릴과 앵커가 필요하고, 석고보드면 나사가 버티는 자리를 찾아 답니다.`],
+      ['쓰던 레일', `${dong} 집에 쓰던 레일이 남아 있으면 길이와 위치가 새 커튼과 맞는지 먼저 봅니다. 맞지 않으면 떼어내고 새 레일을 답니다.`],
+      ['걸리는 것', `${f.room} 창 주변 에어컨 배관, 창문 손잡이, 붙박이장 문이 커튼이 지나가는 길에 걸리지 않는지 봅니다.`],
+      ['이중 레일', `겉지와 쉬폰 속지를 함께 달면 레일이 두 줄입니다. ${dong} 집 커튼박스 깊이가 두 줄을 넣을 만큼인지 확인합니다.`],
+      ['전동 레일', `${area}에서 전동으로 달 생각이면 레일 끝 쪽 전원 위치를 봅니다. 견적에서 전동 커튼 레일 옵션을 고르면 됩니다.`],
+    ],
+    blind: [
+      ['안쪽·바깥', `${dong} 집 창틀 안쪽에 넣을지 바깥 벽에 덮을지 먼저 정합니다. 안쪽은 깔끔하고, 바깥은 빛 차단이 확실합니다.`],
+      ['창 깊이', `${f.room} 창을 안쪽에 달려면 창 깊이가 헤드레일보다 깊어야 하고, 창문 손잡이와 부딪히지 않아야 합니다.`],
+      ['가로·세로 재기', `${area} 집도 안쪽 설치는 창틀 안 폭을 위·가운데·아래에서 재서 가장 짧은 값으로, 바깥 설치는 창보다 넉넉히 잡습니다.`],
+      ['벽 재질', `${dong} 집 벽이 콘크리트면 드릴과 앵커가 필요하고, 창틀 위가 석고보드면 브래킷 나사가 버티는 자리를 찾습니다.`],
+      ['줄 방향', `${f.room} 창은 조작줄을 왼쪽에 둘지 오른쪽에 둘지 정합니다. 가구가 붙은 쪽 반대로 두면 쓰기 편합니다.`],
+      ['아이방', `${dong}${hh && hh.family >= 35 ? '처럼 3·4인 세대가 많은 동네는' : ''} 아이방은 줄 없는 롤스크린이나 전동 방식으로 맞추면 줄이 걸릴 일이 없습니다.`],
+      ['창마다 따로', `${area} 집도 방마다 창 크기가 달라 블라인드는 창마다 가로·세로를 따로 잽니다. 같은 평형이어도 확장 여부에 따라 창이 다릅니다.`],
+      ['방염', `${dong} 사무실·병원·학원은 방염 제품이 필요한지 먼저 확인합니다. 방염 콤비와 방염 롤스크린을 시공했습니다.`],
+    ],
+  };
+  const SHOP_CHECKS: [string, string][] = [
+    ['공식 판매처', `${area}에서 같은 제품명을 파는 곳이 여러 곳일 수 있습니다. ${BRAND} 공식 판매처는 공식몰(curtainmaster.co.kr)과 네이버 스마트스토어입니다.`],
+    ['실측 방식', `${dong} 집 창을 직접 재서 주문하는지, 담당자가 와서 재는지 확인합니다. ${j(BRAND, '는')} 방문 가능 지역이면 무료 실측과 견적 상담을 합니다.`],
+    ['제작 기간', `${area} 커튼집마다 맞춤 제작 기간이 다릅니다. ${j(BRAND, '는')} 국내 맞춤제작 기준 ${FACTS.leadDays}입니다.`],
+    ['가격 구성', `${area} 커튼집 견적에 레일이 들어가는지 봅니다. ${BRAND} 공식몰 가격은 레일포함 풀세트이고 ${FACTS.freeItems}입니다.`],
+    ['비침 정도', `${f.room} 창 쉬폰을 사진만으로 고르기 어렵다면 쉬폰 세 단계(차르르 비침·중간 비침·비침 없는)를 기준으로 상담합니다.`],
+    ['시공 사례', `${c0 ? `${c0.name} 같은 ` : `${dong} `}비슷한 집 시공 사례를 보여 달라고 하세요. ${BRAND} 공식몰에는 아파트부터 병원·학교까지 시공 사례가 올라와 있습니다.`],
+    ['높이 맞춤', `${dong} 집 천장 높이에 맞춰 주는지, 기성 길이인지 봅니다. ${j(BRAND, '는')} 가로 사이즈를 고르면 높이는 해피콜 상담 뒤 맞춤 제작합니다.`],
+    ['블라인드까지', `${f.room}은 커튼, 다른 방은 블라인드처럼 나눠 달 거라면 한 곳에서 같이 상담하는 편이 빠릅니다. 블라인드는 창 크기·소재를 듣고 견적을 드립니다.`],
+  ];
+  const tk = t === 'blind' ? 'blind' : 'curtain';
+  const over = !kind ? {} : kind === 'install' ? {
+    lead: pick([`${dong}${c0 ? ` ${c0.name} 같은 단지` : ''} ${f.room} 창 ${thing} 설치를 상담합니다. ${rail} 자리와 가로 길이만 정하면 높이는 맞춤 제작해 ${FACTS.leadDays}합니다.`, `${area} ${thing} 설치는 ${rail} 달 자리부터 봅니다. 창 사진을 보내주시면 안쪽·바깥, 천장·벽 중 어디에 달지 정해 드립니다.`], s, 'ilead'),
+    title: pick([`${p.kw} | 실측부터 ${rail} 설치까지 ${BRAND}`, `${p.kw} — ${area} ${thing} 설치 순서 | ${BRAND}`, `${p.kw} | ${f.room} ${thing} 설치 상담 ${BRAND}`], s, 'ititle'),
+    intro: [
+      pick(t === 'blind' ? [
+        `블라인드 설치는 창틀 안쪽에 넣는 방식과 바깥 벽에 덮는 방식으로 나뉩니다. ${area} ${label} 상담도 이 둘 중 무엇인지부터 정합니다.`,
+        `${area} ${j(label, '은')} ${rail} 달 자리를 정하고 그 자리를 기준으로 가로·세로를 재는 데서 시작합니다. 잰 길이가 곧 제작 사이즈가 됩니다.`,
+        `블라인드는 커튼보다 사이즈 오차에 민감합니다. 창틀 안쪽 설치는 몇 군데를 재서 가장 짧은 값으로 맞춰야 걸리지 않습니다.`,
+      ] : [
+        `커튼 설치는 레일을 다는 일과 커튼을 거는 일로 나뉩니다. ${j(BRAND, '는')} 레일포함 풀세트로 나가 레일과 커튼을 한 번에 받습니다.`,
+        `${area} ${j(label, '은')} 레일을 커튼박스 안에 달지, 천장이나 벽에 달지부터 정합니다. 레일 자리가 정해지면 그 자리에서 가로·세로를 잽니다.`,
+        `직접 달지 방문 설치를 받을지는 천장 재질과 레일 위치로 정합니다. 커튼박스 안쪽이면 직접 다는 경우도 있고, 콘크리트 천장이면 드릴 작업이 필요합니다.`,
+      ], s, 'ii1'),
+      intro[1],
+      pick([
+        `잰 가로 길이로 공식몰이나 스마트스토어에서 사이즈를 고르면, 높이는 해피콜 상담에서 확인하고 맞춤 제작해 ${FACTS.leadDays}합니다.`,
+        `${j(area, '이')} 방문 가능 지역이면 담당자가 무료 실측과 견적 상담을 하고, 설치 일정은 상담 뒤 안내합니다.`,
+        `설치 전에 창 사진과 ${rail} 달 자리 사진을 문자(${CONTACT.sms})로 보내주시면 어디에 어떻게 달지 먼저 봐 드립니다.`,
+      ], s, 'ii3'),
+    ],
+    rooms: checks(INSTALL_CHECKS[tk], 'ichk'),
+    roomsHeading: pick([`${area} ${thing} 설치 전 확인`, '설치 전에 볼 것', `${dong} ${thing} ${rail} 자리 정하기`], s, 'irmh'),
+    steps: [
+      { t: `${rail} 자리 정하기`, d: t === 'blind' ? `${dong} 집 창틀 깊이를 보고 안쪽에 넣을지 바깥에 덮을지 정합니다.` : `${dong} 집 커튼박스가 있는지, 깊이가 얼마인지 보고 레일 자리를 정합니다.` },
+      { t: '가로·세로 실측', d: `${dong} 집에서 정한 자리를 기준으로 가로를 재서 사이즈를 고르고, 세로는 ${t === 'blind' ? '창 높이' : '레일에서 바닥까지'}를 잽니다.` },
+      { t: '해피콜·맞춤제작', d: `${dong} 집 높이는 해피콜 상담에서 확인하고 국내 맞춤제작 기준 ${FACTS.leadDays}, ${FACTS.freeItems}.` },
+      { t: '설치', d: pick([`${j(area, '이')} 방문 가능 지역이면 담당자가 무료 실측과 견적 상담을 하고 설치 일정을 안내합니다.`, `${area} 설치 일정은 ${CONTACT.phone}로 확인해 주세요. 직접 다는 경우 ${dong} 집 ${rail} 위치만 맞으면 됩니다.`], s, 'ist4') },
+    ],
+    faq: rotate([
+      { q: `${area}에서 ${thing} 직접 설치할 수 있나요?`, a: `${t === 'blind' ? '브래킷과 나사가 함께 가서' : '레일포함 풀세트로 레일과 커튼이 함께 가서'} 직접 다는 경우도 있습니다. ${dong} 집 천장이 콘크리트라 드릴 작업이 어려우면 방문 설치를 상담해 주세요.` },
+      { q: `${area}에 설치 기사가 오나요?`, a: `${dong} 같은 방문 가능 지역은 지역별 담당자가 무료 실측과 견적 상담을 하고, 설치 일정은 상담 뒤 안내합니다. ${area} 일정은 ${CONTACT.phone}로 확인해 주세요.` },
+      t === 'blind' ? { q: `${f.room} 창 깊이가 얕은데 안쪽에 달 수 있나요?`, a: `${dong} 집 창이 손잡이와 부딪히면 안쪽 대신 바깥 벽에 덮는 방식으로 바꾸고, 빛 차단도 바깥 설치가 더 확실합니다.` }
+        : { q: `${area} 설치 때 레일은 따로 사야 하나요?`, a: `레일포함 풀세트로 나가고 ${FACTS.freeItems}입니다.` },
+      { q: `${dong} 주문하고 설치까지 얼마나 걸리나요?`, a: `국내 맞춤제작 기준 ${FACTS.leadDays}되고, ${dong} 방문 설치는 상담 뒤 일정을 잡습니다.` },
+      { q: `${dong} 집에 쓰던 레일을 그대로 써도 되나요?`, a: `${dong} 집에 남은 레일이 길이와 위치가 새 커튼과 맞으면 쓸 수 있고, 맞지 않으면 새 레일로 바꾸는 편이 깔끔합니다.` },
+    ], s, 'ifaq').slice(0, 4),
+    closing: { heading: pick([`${area} ${label} 상담`, `${rail} 자리 사진부터 보내주세요`, `${dong} ${thing} 설치 문의`], s, 'ich'), text: pick([`창 사진과 ${rail} 달 자리 사진을 문자(${CONTACT.sms})로 보내주시면 설치 방법과 사이즈를 골라 드립니다.`, `설치 일정과 방문 가능 여부는 전화(${CONTACT.phone})로 바로 확인됩니다.`], s, 'ict') },
+  } : {
+    lead: pick([`${area}에서 커튼집을 찾는다면 실측·제작 기간·레일 포함 여부부터 비교해 보세요. ${j(BRAND, "은")} 국내 맞춤제작 ${FACTS.leadDays}, ${FACTS.freeItems}입니다.`, `${dong}${c0 ? ` ${c0.name} 같은 단지` : ''} 집 커튼, 매장에 가지 않고 창 사진과 가로 길이로 상담합니다. 공식몰·스마트스토어가 공식 판매처입니다.`], s, 'slead'),
+    title: pick([`${p.kw} | 공식 판매처 ${BRAND} 맞춤 커튼`, `${p.kw} — 고르는 기준과 ${area} 상담 | ${BRAND}`, `${p.kw} | 실측·제작 기간·가격 비교 ${BRAND}`], s, 'stitle'),
+    intro: [
+      pick([
+        `${area}에서 커튼집을 고를 때는 가게가 가까운지보다 실측을 누가 하는지, 맞춤 제작 기간이 얼마인지, 레일이 가격에 들어가는지를 먼저 봅니다.`,
+        `${j(BRAND, '는')} 공식몰과 네이버 스마트스토어에서 파는 맞춤 커튼 브랜드입니다. 창 가로 길이를 재서 주문하고, 방문 가능 지역이면 무료 실측을 받습니다.`,
+        `커튼집마다 가격 표기가 다릅니다. ${BRAND} 공식몰은 레일포함 풀세트 기준으로 쉬폰 80,000원, 거실·암막 140,000원부터 가로 사이즈별로 표기합니다.`,
+      ], s, 'si1'),
+      intro[1],
+      pick([
+        `공식몰 표기로 누적 상담 120,000건 이상, 누적 시공 30,000세트 이상, 하루 평균 150건을 출고합니다.`,
+        `${area} 커튼집 상담은 창 사진 한두 장과 가로 길이면 시작됩니다. 문자 ${CONTACT.sms}로 받습니다.`,
+        `사업자등록번호는 ${BUSINESS.bizNumber}(통신판매업 ${BUSINESS.mailOrder})이고, 공식 판매처는 공식몰과 스마트스토어 두 곳입니다.`,
+      ], s, 'si3'),
+    ],
+    rooms: checks(SHOP_CHECKS, 'schk'),
+    roomsHeading: pick([`${area} 커튼집 고를 때`, '커튼집 고르는 기준', `${dong} 커튼집 비교 전에`], s, 'srmh'),
+    steps: [
+      { t: '사진·가로 길이', d: `${dong} 집 창 사진과 가로 길이를 문자(${CONTACT.sms})로 보내거나 전화로 알려 주세요.` },
+      { t: '제품·사이즈 고르기', d: `${f.room} 창에 맞는 원단과 가로 사이즈를 공식몰이나 스마트스토어에서 고르고, 가격은 레일포함 풀세트 기준입니다.` },
+      { t: '해피콜', d: `높이는 해피콜 상담에서 ${dong} 집 천장·바닥 높이를 듣고 맞춥니다.` },
+      { t: '제작·배송', d: `국내 맞춤제작 기준 ${FACTS.leadDays}, ${FACTS.freeItems}로 ${area}까지 보내고, 방문 가능 지역은 무료 실측·설치 상담도 합니다.` },
+    ],
+    faq: rotate([
+      { q: `${area}에서 매장에 가서 봐야 하나요?`, a: `${dong} 집 창 사진과 가로 길이로 상담하고, 방문 가능 지역은 담당자가 무료 실측과 견적 상담을 합니다.` },
+      { q: `${f.room} 커튼 가격은 어디서 보나요?`, a: `공식몰에 레일포함 풀세트 가격이 가로 사이즈별로 있고, ${f.room} 창에 많이 다는 쉬폰은 80,000원, 거실·암막은 140,000원부터입니다.` },
+      { q: `${area}에서 주문은 공식몰과 스마트스토어 중 어디서 하나요?`, a: `두 곳 모두 ${BRAND} 공식 판매처라 ${dong}에서도 편한 곳에서 주문하시면 됩니다.` },
+      { q: `${dong}까지 얼마나 걸리나요?`, a: `국내 맞춤제작 기준 ${FACTS.leadDays}되고, ${area}까지 택배로 보냅니다.` },
+      { q: `${dong} 집 블라인드도 같이 되나요?`, a: `방마다 콤비·우드·롤스크린·알루미늄 블라인드를 함께 상담하고, 블라인드는 창 크기와 소재를 듣고 견적을 드립니다.` },
+    ], s, 'sfaq').slice(0, 4),
+    closing: { heading: pick([`${area} 커튼집 상담`, '창 사진부터 보내주세요', `${dong} 맞춤 커튼 상담`], s, 'sch'), text: pick([`창 사진과 가로 길이를 문자(${CONTACT.sms})로 보내주시면 원단과 사이즈를 골라 드립니다.`, `가격·제작 기간은 전화(${CONTACT.phone})로 바로 확인됩니다.`], s, 'sct') },
+  };
+
   return {
     topic: t, facts: f, area, title, description, lead,
     eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
@@ -312,5 +426,6 @@ export function compose(p: Page) {
     roomsHeading: pick([`${area} 공간별 고르는 법`, `${f.room}부터 고릅니다`, '방마다 다르게'], s, 'rmh'),
     priceNote: t === 'blind' ? pick(['블라인드는 공식몰에 정가 상품이 없어 창 크기·소재 상담 뒤 견적을 드립니다.', `${area} 블라인드 견적은 창 개수와 소재를 듣고 드립니다.`], s, 'pn') : '공식몰 표기 가격, 레일포함 풀세트 · 가로 사이즈 기준. 정확한 금액은 사이즈별로 다릅니다.',
     closing: { heading: pick([`${area} ${label} 상담`, `${f.room} 창 길이부터 알려주세요`, `${area}, 맞춤 커튼 3일`], s, 'ch'), text: pick([`창 사진과 가로 길이를 문자(${CONTACT.sms})로 보내주시면 제품과 사이즈를 골라 드립니다.`, `${area} ${f.room} 창 사진 한두 장과 가로 길이면 충분합니다. 문자 ${CONTACT.sms}.`, `${label} 고민은 전화(${CONTACT.phone})가 가장 빠릅니다. 창 사진은 문자로 받습니다.`], s, 'ct') },
+    ...over,
   };
 }

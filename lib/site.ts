@@ -1,7 +1,7 @@
 // 사이트 설정 — 연락처·고정 링크·브랜드 사실. 출처: curtainmaster.co.kr (2026-10-26 확인)
 // SEO 페이지마다 공식몰·스마트스토어 링크가 고정으로 들어간다(헤더·히어로 아래 띠·푸터·구조화 데이터 sameAs).
 
-export const SITE_URL = process.env.SITE_URL || 'https://curtainmaster.example'; // TODO: SEO 사이트 도메인 확정 시 변경
+export const SITE_URL = process.env.SITE_URL || 'https://curtainblind.co.kr';
 export const BRAND = '커튼명장';
 export const BRAND_EN = 'CURTAIN MASTER';
 
@@ -29,7 +29,8 @@ export const FACTS = {
   freeItems: '자석끈 + 커튼레일 무료',
 };
 
-// 순차 오픈: 1 = 시군구 1,806 / 2 = +동 커튼·블라인드·커튼블라인드 3,894 / 3 = 전체 5,982
+// 순차 오픈: wave = 오픈일부터 며칠째 + 1 (data/site-pages.json). 1·4·7·10 = 기존 5,982 를 25%씩, 2~31 = 새 페이지 하루 약 70개
+// 오늘 값은 python -I scripts/drip/drip_status.py data/drip.json. 전체 빌드는 OPEN_WAVE=31
 export const OPEN_WAVE = Number(process.env.OPEN_WAVE || 1);
 // 표기만 다른 페이지(강남/강남구)는 대표 페이지로 canonical + 사이트맵 제외
 export const MERGE_VARIANTS = true;

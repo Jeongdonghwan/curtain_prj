@@ -8,6 +8,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: 'weekly', priority: 1 },
     { url: `${SITE_URL}/area/`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
-    ...OPEN_PAGES.filter(inSitemap).map((p) => ({ url: `${SITE_URL}${pageEncodedPath(p)}`, lastModified: now, changeFrequency: 'monthly' as const, priority: p.wave === 1 ? 0.8 : 0.6 })),
+    ...OPEN_PAGES.filter(inSitemap).map((p) => ({ url: `${SITE_URL}${pageEncodedPath(p)}`, lastModified: now, changeFrequency: 'monthly' as const, priority: p.level === '동' || p.level === '읍면' ? 0.6 : 0.8 })),
   ];
 }
