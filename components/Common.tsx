@@ -69,6 +69,7 @@ export const Header = () => (
       <nav className="nav">
         <Link href="/#products">제품</Link>
         <Link href="/area/">지역</Link>
+        <Link href="/blog/">가이드</Link>
         <a href={LINKS.home} target="_blank" rel="noopener">공식몰</a>
         <a href={LINKS.store} target="_blank" rel="noopener">스마트스토어</a>
         <a href={tel} className="nav-call"><IconPhone />{CONTACT.phone}</a>

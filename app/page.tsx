@@ -96,7 +96,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <p data-reveal><Link href="/area/" className="more">전체 지역 페이지 <IconArrow /></Link></p>
+          <p data-reveal><Link href="/area/" className="more">전체 지역 페이지 <IconArrow /></Link> <Link href="/blog/" className="more">커튼 가이드 <IconArrow /></Link></p>
         </section>
 
         <section className="sec">

@@ -22,7 +22,13 @@ curtainmaster.co.kr(커튼명장)을 바탕으로 한 메인 홈 + 서울·경�
 - 묶음 4 (2,088): **30일간 새 페이지** — D1~D30 하루 69~70개 (wave 2~31)
 - 매일 06:00 `C:\side_Prj\_ops\daily.sh` 가 GitHub main 을 받아 오늘 wave 로 빌드·deploy 브랜치 푸시, 서버는 crontab 매시간 받음
 - 수집이 0이면 `data/drip.json` 의 `hold` 에 날짜를 넣어 오픈만 멈춘다. 열린 페이지는 닫지 않는다
-- 2026-11-29(D30)에 전부 열림. 그 뒤 daily.sh 목록에서 curtain 을 빼도 된다
+- 2026-11-29(D30)에 전부 열림. 블로그 글이 12-01까지 열리므로 그 뒤에 daily.sh 목록에서 curtain 을 뺀다
+
+## 커튼 가이드 블로그 (`/blog/`, 2026-11-02 추가)
+
+- 글 45편 `content/blog/NN-slug.md`, 2026-11-02부터 30일간 하루 1·2편 번갈아 공개 (`python -I scripts/schedule_posts.py 2026-11-02` 로 date 배정)
+- `lib/blog.ts` 가 date ≤ 오늘(KST, env BUILD_DATE 우선)인 글만 목록·글·사이트맵·RSS에 넣는다. daily.sh 가 매일 빌드하므로 따로 할 일 없음
+- 키워드는 지역 없는 질문형(실측·원단·레일·세탁·블라인드 종류 등) — 지역 페이지와 순위 다툼 방지. 대표 사진은 시공 사례 사진을 slug 로 고정 선택
 
 ## 고정 링크·연락처 (`lib/site.ts`)
 
