@@ -44,6 +44,6 @@ export function getPosts(): Post[] {
 export const getPost = (slug: string) => getPosts().find((p) => p.slug === decodeURIComponent(slug));
 export const postPath = (p: Post) => `/blog/${p.slug}/`;
 export const postEncPath = (p: Post) => `/blog/${encodeURIComponent(p.slug)}/`;
-// 대표 사진 — 실제 시공 사례 사진을 slug 로 고정 선택 (og·목록·본문 공용)
-const CASES = fs.readdirSync(path.join(process.cwd(), 'public', 'images')).filter((f) => f.startsWith('case-')).sort();
-export const postImage = (p: Post) => `/images/${CASES[[...p.slug].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % CASES.length]}`;
+// 대표 사진 — 커튼 시공 후 사진(1200×900) 6장 중 slug 로 고정 선택 (og·목록·본문 공용). 시공 사례(case-*)는 230px 썸네일이라 안 씀
+const PHOTOS = ['a', 'b', 'c', 'd', 'e', 'f'];
+export const postImage = (p: Post) => `/images/ba-${PHOTOS[[...p.slug].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % PHOTOS.length]}-after.webp`;

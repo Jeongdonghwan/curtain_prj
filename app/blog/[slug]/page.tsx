@@ -39,7 +39,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
         <p className="hero-label dark">{p.date.replace(/-/g, '.')}</p>
         <h1 className="page-title">{p.title}</h1>
         <p className="prose-p">{p.description}</p>
-        <figure className="post-fig"><img src={postImage(p)} alt={`${p.keyword} — ${BRAND} 시공 사진`} /></figure>
+        <figure className="post-fig"><img src={postImage(p)} alt={`${p.keyword} — ${BRAND} 커튼 시공 사진`} /></figure>
         <article className="prose">
           {p.sections.map((x, i) => (
             <section key={x.h} className="sec">
