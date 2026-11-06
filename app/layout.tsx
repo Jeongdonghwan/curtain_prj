@@ -8,7 +8,7 @@ import { SITE_URL, BRAND } from '../lib/site';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: `${BRAND} | 형상기억 맞춤 커튼·블라인드 서울·경기`, template: '%s' },
-  description: '커튼명장 형상기억 맞춤제작 커튼·블라인드. 국내 맞춤제작 평균 3일 이내 출고, 레일포함 풀세트, 자석끈·커튼레일 무료. 대표전화 1877-8540.',
+  description: '커튼명장 형상기억 맞춤 커튼·블라인드. 평균 3일 이내 출고, 레일포함 풀세트, 자석끈·커튼레일 무료. 1877-8540',
   robots: { index: true, follow: true },
   alternates: { canonical: '/', types: { 'application/rss+xml': [{ url: '/rss.xml', title: `${BRAND} 지역별 커튼·블라인드` }] } },
   openGraph: { type: 'website', siteName: BRAND, locale: 'ko_KR', images: ['/images/ba-a-after.webp'] },
