@@ -27,7 +27,8 @@ curtainmaster.co.kr(커튼명장)을 바탕으로 한 메인 홈 + 서울·경�
 ## 커튼 가이드 블로그 (`/blog/`, 2026-11-02 추가)
 
 - 글 45편 `content/blog/NN-slug.md`, 2026-11-02부터 30일간 하루 1·2편 번갈아 공개 (`python -I scripts/schedule_posts.py 2026-11-02` 로 date 배정)
-- `lib/blog.ts` 가 date ≤ 오늘(KST, env BUILD_DATE 우선)인 글만 목록·글·사이트맵·RSS에 넣는다. daily.sh 가 매일 빌드하므로 따로 할 일 없음
+- `lib/blog.ts` 가 date(+time) ≤ 지금(KST, env BUILD_DATE 우선)인 글만 목록·글·사이트맵·RSS에 넣는다. daily.sh 가 매일 빌드하므로 따로 할 일 없음
+- **추가 126편 (사용자 결정 2026-11-07)**: 46~171번, 2026-11-08~11-28 3주간 하루 6편 — 오전 3편(time 없음, 06:00 빌드) + 오후 3편(`time: 13:00`, 13:30 빌드). 오후 빌드는 Windows 작업 "post-launch pm curtain" 이 `daily.sh curtain` 을 13:30에 실행. 11-28 지나면 그 작업은 지운다. 기존 45편(12-01까지 1·2편)은 그대로
 - 키워드는 지역 없는 질문형(실측·원단·레일·세탁·블라인드 종류 등) — 지역 페이지와 순위 다툼 방지. 대표 사진은 커튼 시공 후 사진 6장 중 slug 로 고정 선택
 
 ## 고정 링크·연락처 (`lib/site.ts`)

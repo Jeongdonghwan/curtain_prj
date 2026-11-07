@@ -4,10 +4,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-export type Post = { slug: string; title: string; description: string; keyword: string; date: string; sections: { h: string; p: string[]; list: string[] }[] };
+// time(선택, 'HH:MM'): 같은 날 안에서 공개 시각. 없으면 00:00 → 그날 첫 빌드부터 보임. 오후 글은 `time: 14:00`
+export type Post = { slug: string; title: string; description: string; keyword: string; date: string; time: string; sections: { h: string; p: string[]; list: string[] }[] };
 
 const DIR = path.join(process.cwd(), 'content', 'blog');
-const today = () => process.env.BUILD_DATE || new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+// 'YYYY-MM-DDTHH:MM' (KST). BUILD_DATE 가 날짜만이면 그날 00:00 기준
+const now = () => process.env.BUILD_DATE || new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 16);
 
 function parse(raw: string): Post | null {
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -28,7 +30,7 @@ function parse(raw: string): Post | null {
   }
   if (cur) sections.push(cur);
   if (!meta.slug || !meta.title || !meta.date) return null;
-  return { slug: meta.slug, title: meta.title, description: meta.description || '', keyword: meta.keyword || '', date: meta.date, sections };
+  return { slug: meta.slug, title: meta.title, description: meta.description || '', keyword: meta.keyword || '', date: meta.date, time: meta.time || '00:00', sections };
 }
 
 let cache: Post[] | null = null;
@@ -36,9 +38,10 @@ export function getPosts(): Post[] {
   if (cache) return cache;
   let files: string[] = [];
   try { files = fs.readdirSync(DIR).filter((f) => f.endsWith('.md') && !f.startsWith('_')); } catch {}
-  const t = today();
-  cache = files.map((f) => parse(fs.readFileSync(path.join(DIR, f), 'utf-8'))).filter((p): p is Post => !!p && p.date <= t)
-    .sort((a, b) => b.date.localeCompare(a.date));
+  const t = now();
+  const at = (p: Post) => `${p.date}T${p.time}`;
+  cache = files.map((f) => parse(fs.readFileSync(path.join(DIR, f), 'utf-8'))).filter((p): p is Post => !!p && at(p) <= t)
+    .sort((a, b) => at(b).localeCompare(at(a)));
   return cache;
 }
 export const getPost = (slug: string) => getPosts().find((p) => p.slug === decodeURIComponent(slug));

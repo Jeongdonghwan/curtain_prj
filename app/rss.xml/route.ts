@@ -17,7 +17,7 @@ export function GET() {
   });
   const posts = getPosts().map((p) => {
     const url = `${SITE_URL}${postEncPath(p)}`;
-    return `<item><title>${esc(p.title)}</title><link>${url}</link><description>${esc(p.description)}</description><pubDate>${new Date(p.date + 'T06:00:00+09:00').toUTCString()}</pubDate><guid isPermaLink="true">${url}</guid></item>`;
+    return `<item><title>${esc(p.title)}</title><link>${url}</link><description>${esc(p.description)}</description><pubDate>${new Date(p.date + 'T' + (p.time === '00:00' ? '06:00' : p.time) + ':00+09:00').toUTCString()}</pubDate><guid isPermaLink="true">${url}</guid></item>`;
   });
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"><channel><title>${esc(BRAND)} 서울·경기 커튼·블라인드</title><link>${SITE_URL}/</link><description>${esc(BRAND)} 지역별 커튼·암막커튼·블라인드 안내</description><language>ko</language><lastBuildDate>${date}</lastBuildDate>
