@@ -83,7 +83,7 @@ export default function Home() {
       <div className="wrap content">
         <section className="sec">
           <SectionHead no="05" title="실제 시공 현장" sub="주거와 병원·학교·체육관 같은 상업 공간까지." />
-          <div className="mosaic">{[48, 9, 53, 29, 36].map((n, i) => <figure key={n} data-reveal style={{ transitionDelay: `${i * 70}ms` }}><img src={`/images/case-${n}.webp`} alt={`${BRAND} 시공 사례`} loading="lazy" /></figure>)}</div>
+          <div className="mosaic">{[48, 9, 53, 29, 36].map((n, i) => <figure key={n} data-reveal style={{ transitionDelay: `${i * 70}ms` }}><img src={`/images/case-${String(n).padStart(2, '0')}.webp`} alt={`${BRAND} 시공 사례`} loading="lazy" /></figure>)}</div>
         </section>
 
         <section className="sec alt">
