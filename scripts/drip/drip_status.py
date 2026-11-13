@@ -7,6 +7,7 @@ import datetime as dt, json, sys
 
 
 def wave(cfg, today):
+    if cfg.get('wave'): return cfg['wave']  # 고정 단계 (2026-11-13 사용자 결정: 남은 4단계 동 페이지를 한 번에 연다)
     cap = dt.date.fromisoformat(cfg['hold']) if cfg.get('hold') else today  # hold: 그 날짜 묶음에서 오픈 멈춤
     return max(0, min(cfg['maxWave'], (min(today, cap) - dt.date.fromisoformat(cfg['launch'])).days + 1))
 
@@ -16,6 +17,7 @@ if __name__ == '__main__':
         c, t = {'launch': '2026-10-30', 'maxWave': 31}, dt.date.fromisoformat
         assert [wave(c, t(d)) for d in ('2026-10-29', '2026-10-30', '2026-11-08', '2026-11-29', '2026-12-31')] == [0, 1, 10, 31, 31]
         assert wave({**c, 'hold': '2026-11-02'}, t('2026-11-20')) == 4
+        assert wave({**c, 'wave': 31}, t('2026-11-14')) == 31
         sys.exit(print('demo ok'))
     cfg = json.load(open(sys.argv[1], encoding='utf-8'))
     today = dt.date.fromisoformat(sys.argv[2]) if len(sys.argv) > 2 else (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=9)).date()  # KST
