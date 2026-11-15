@@ -1,6 +1,6 @@
 // 커튼명장 공통 UI — 각진 버튼, 선 아이콘, 번호 머리, 공식 판매처 고정 띠, 전후 비교 슬라이더, 빛 투과 눈금.
 import Link from 'next/link';
-import { BRAND, BRAND_EN, CONTACT, BUSINESS, LINKS, tel, smsHref } from '../lib/site';
+import { BRAND, BRAND_EN, CONTACT, BUSINESS, LINKS, UPDATED, tel, smsHref } from '../lib/site';
 import { LIGHT, baCaption } from '../lib/compose';
 
 export const JsonLd = ({ data }: { data: object | object[] }) => (
@@ -84,7 +84,7 @@ export const Footer = () => (
       <div>
         <strong className="foot-brand">{BRAND}</strong>
         <p>형상기억 맞춤제작 커튼·블라인드. 국내 맞춤제작, 레일포함 풀세트.</p>
-        <p className="foot-links"><a href={LINKS.home} target="_blank" rel="noopener">공식몰 curtainmaster.co.kr</a><a href={LINKS.store} target="_blank" rel="noopener">네이버 스마트스토어</a></p>
+        <p className="foot-links"><Link href="/about/">소개</Link><a href={LINKS.home} target="_blank" rel="noopener">공식몰 curtainmaster.co.kr</a><a href={LINKS.store} target="_blank" rel="noopener">네이버 스마트스토어</a></p>
       </div>
       <ul className="foot-info">
         <li><span>대표전화</span>{CONTACT.phone}</li>
@@ -95,7 +95,7 @@ export const Footer = () => (
         <li><span>메일</span>{BUSINESS.email}</li>
       </ul>
     </div>
-    <div className="wrap foot-bottom">© {new Date().getFullYear()} {BRAND} · 상품 가격과 구성은 공식몰 표기 기준입니다.</div>
+    <div className="wrap foot-bottom">© {new Date().getFullYear()} {BRAND} · 상품 가격과 구성은 공식몰 표기 기준입니다. · 최종 수정 <time dateTime={UPDATED}>{UPDATED}</time></div>
   </footer>
 );
 

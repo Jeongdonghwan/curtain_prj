@@ -8,6 +8,7 @@ cd "$(dirname "$0")/.."
 rm -rf ./out
 OPEN_WAVE=$WAVE SITE_URL=$URL npx next build
 grep -q "$URL" out/sitemap.xml || { echo "sitemap에 주소가 없음"; exit 1; }
+python -I scripts/postbuild.py out   # lastmod·sitemap split·llms.txt
 REMOTE=$(git remote get-url origin)
 cd out
 git init -q -b deploy && git add -A
