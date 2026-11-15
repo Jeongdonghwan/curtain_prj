@@ -2,16 +2,15 @@
 // 사실 근거: data/products.json(공식몰 상품·가격), data/regions-sg.json(지역 주거·창), lib/site.ts FACTS(공식몰 표기),
 //           data/dong-apts.json(동별 공동주택 단지 — K-apt 단지 기본정보).
 // 하지 않는 것: 없는 할인·없는 보증 기간·출처 없는 숫자, 블라인드 가격(공식몰에 상품이 없어 상담으로 안내).
-import { Page, Product, PRODUCTS, ALL_PAGES, factsOf, aptsOf, hash } from './data';
+import { Page, Product, PRODUCTS, ALL_PAGES, OPEN_PAGES, factsOf, aptsOf } from './data';
 import { BRAND, CONTACT, FACTS, BUSINESS } from './site';
 import { j } from './ko';
+import { pick, rotate, wordLayer, CTA, STEPS_HEADING, LIGHT_SUB, PRODUCTS_HEADING, REGION_CHECK, SPEC2, type Ctx } from './words';
 
 type Topic = 'curtain' | 'blackout' | 'blind' | 'motor';
 const topicOf = (w: string): Topic =>
   /암막/.test(w) ? 'blackout' : /전동/.test(w) ? 'motor' : /블라인드|롤스크린/.test(w) && !/커튼블라인드/.test(w) ? 'blind' : 'curtain';
 
-const pick = <T,>(arr: T[], s: string, salt: string) => arr[hash(`${s}::${salt}`) % arr.length];
-const rotate = <T,>(arr: T[], s: string, salt: string) => { if (!arr.length) return arr; const k = hash(`${s}::${salt}`) % arr.length; return [...arr.slice(k), ...arr.slice(0, k)]; };
 const won = (n: number) => `${n.toLocaleString()}원`;
 
 // 빛 투과 눈금 위치 (0 = 다 비침, 100 = 완전 차단)
@@ -230,10 +229,10 @@ export function compose(p: Page) {
   const region = {
     nearLine,
     heading: apt ? pick([`${dong} 아파트 단지`, `${dong} 단지별로 봅니다`, `${dong} 공동주택과 창`], s, 'rh') : pick([`${f.name} 창에 맞추는 법`, `${area} 집들은 이렇습니다`, `${f.room} 창부터 봅니다`], s, 'rh'),
-    body: aptLines.length ? [...aptLines.slice(1), hhLines[1]].filter(Boolean).join(' ') || aptLines[0] : noAptLine ? `${hhLines.join(' ')} ${f.windows}.` : (hhLines[1] ? hhLines[1] + ' ' : '') + pick([
-      `${f.windows}. 그래서 ${area} 상담에서는 ${t === 'blind' ? '창틀 안쪽 설치인지 바깥 설치인지' : '커튼박스 깊이와 레일 위치'}부터 확인합니다.`,
+    body: (aptLines.length ? [...aptLines.slice(1), hhLines[1]].filter(Boolean).join(' ') || aptLines[0] : noAptLine ? `${hhLines.join(' ')} ${f.windows}.` : (hhLines[1] ? hhLines[1] + ' ' : '') + pick([
+      `${f.windows}.`,
       `${j(f.name, '은')} ${f.homes}. ${t === 'blackout' ? '침실은 바닥까지 닿는 길이로 암막을, 거실은 쉬폰과 함께 이중으로' : t === 'blind' ? '거실은 커튼, 방과 주방은 블라인드로 나눠' : '거실은 겉지와 속지 이중으로, 방은 암막이나 쉬폰 한 겹으로'} 맞추는 집이 많습니다.`,
-    ], s, 'rb'),
+    ], s, 'rb')) + ` ${pick([`그래서 ${area} ${label} 상담에서는 ${REGION_CHECK[p.word]}부터 확인합니다.`, `${area} ${j(label, '은')} ${REGION_CHECK[p.word]}를 먼저 보고 나머지를 정합니다.`], s, 'rbw')}`,
     complexes: cx.slice(0, 6),
     dl: apt ? ([
       ['등록 단지', `${apt.count}곳 · ${apt.households.toLocaleString()}세대`],
@@ -256,12 +255,12 @@ export function compose(p: Page) {
 
   // ---- 주문·설치 과정 (공식몰 안내 기준) ----
   const steps = dongLevel ? [
-    { t: '가로 사이즈 선택', d: `${c0 ? `${c0.name} 같은 단지는 평형별 창 크기가 비슷하지만, ` : ''}${area} 집 창 가로 길이를 직접 재서 공식몰이나 스마트스토어에서 사이즈를 고릅니다.` },
+    { t: '가로 사이즈 선택', d: `${c0 ? `${c0.name} 같은 단지는 평형별 창 크기가 비슷하지만, ` : ''}${area} 집 창 가로 길이를 직접 재서 공식몰이나 스마트스토어에서 사이즈를 고릅니다. ${j(label, '은')} ${REGION_CHECK[p.word]}를 먼저 봅니다.` },
     { t: '해피콜 상담', d: `높이는 해피콜 상담에서 ${dong} 집 천장·바닥 높이를 듣고 맞춤 제작합니다.` },
     { t: '국내 맞춤제작', d: `국내 맞춤제작 기준 ${FACTS.leadDays}, ${FACTS.freeItems}로 ${area}까지 보냅니다.` },
     { t: t === 'blind' ? '방문 실측·시공' : '설치', d: `${j(area, '이')} 방문 가능 지역이면 담당자가 무료 실측과 견적 상담을 하고, 설치 일정은 상담 뒤 안내합니다.` },
   ] : [
-    { t: '가로 사이즈 선택', d: pick([`${area} 창의 가로 길이를 재서 공식몰이나 스마트스토어에서 사이즈를 고릅니다.`, `${f.room} 창 가로 길이를 재 주세요. 그 길이로 사이즈를 고르면 됩니다.`], s, 'st1') },
+    { t: '가로 사이즈 선택', d: pick([`${area} 창의 가로 길이를 재서 공식몰이나 스마트스토어에서 사이즈를 고릅니다. ${j(label, '은')} ${REGION_CHECK[p.word]}를 먼저 봅니다.`, `${f.room} 창 가로 길이를 재 주세요. ${REGION_CHECK[p.word]}만 정해지면 그 길이로 사이즈를 고르면 됩니다.`], s, 'st1') },
     { t: '해피콜 상담', d: pick(['높이는 해피콜 상담 뒤 공간에 맞춰 맞춤 제작합니다.', `높이는 전화로 확인합니다. ${f.windows.split(/[,.]/)[0].includes('커튼박스') ? '커튼박스 깊이도 이때 함께 봅니다.' : '천장에서 바닥까지 길이를 함께 봅니다.'}`], s, 'st2') },
     { t: '국내 맞춤제작', d: pick([`국내 맞춤제작 기준 ${FACTS.leadDays}됩니다. ${FACTS.freeItems}.`, `${FACTS.leadDays}. 레일포함 풀세트로 나가고 ${FACTS.freeItems}입니다.`], s, 'st3') },
     { t: t === 'blind' ? '방문 실측·시공' : '설치', d: pick([`${j(area, '이')} 방문 가능 지역이면 담당자가 무료 실측과 견적 상담을 하고, 설치 일정은 상담 뒤 안내합니다.`, `설치는 전문 시공기사가 합니다. ${area} 일정은 ${CONTACT.phone}로 확인해 주세요.`], s, 'st4') },
@@ -294,10 +293,14 @@ export function compose(p: Page) {
     ],
   };
   const regionFaq = [
-    { q: `${area}도 방문 실측이 되나요?`, a: `${dongLevel ? `${area} 같은 ` : ''}방문 가능 지역은 지역별 담당자가 무료 실측과 견적 상담을 합니다. ${area} 일정은 ${CONTACT.phone}로 확인해 주세요.` },
+    pick([
+      { q: `${area} ${label} 방문 실측이 되나요?`, a: `${dongLevel ? `${area} 같은 ` : ''}방문 가능 지역은 지역별 담당자가 ${label} 무료 실측과 견적 상담을 합니다. ${area} 일정은 ${CONTACT.phone}로 확인해 주세요.` },
+      { q: `${area}까지 ${label} 실측하러 오나요?`, a: `${j(area, '이')} 방문 가능 지역이면 담당자가 ${REGION_CHECK[p.word]}까지 보고 무료 실측·견적 상담을 합니다. 일정은 ${CONTACT.phone}로 확인해 주세요.` },
+    ], s, 'rf1'),
     c0 ? { q: `${c0.name} 같은 ${dong} 단지는 무엇을 많이 다나요?`, a: `${c0.name}${c0.year ? `(${c0.year}년 사용승인${c0.hall ? `, ${c0.hall}` : ''})` : ''} 같은 단지는 ${f.room}에 ${j(t === 'blind' ? '콤비블라인드나 롤스크린' : t === 'blackout' ? '암막 겉지와 쉬폰 속지' : '겉지와 쉬폰 속지 이중 커튼', '을')} 많이 맞춥니다. 같은 평형이면 ${c0.name} 안에서는 창 가로 길이가 비슷해, 평형을 알려주시면 사이즈 고르기가 빨라집니다.` } :
     { q: `${dongLevel ? dong : f.name} ${f.room} 창은 무엇을 많이 다나요?`, a: `${hh ? `${j(dong, '은')} 1인 세대 ${hh.one}%, 3·4인 세대 ${hh.family}%인 동네입니다.` : `${f.windows}.`} ${f.room}에는 ${j(t === 'blind' ? '콤비블라인드나 롤스크린' : t === 'blackout' ? '암막 겉지와 쉬폰 속지' : '겉지와 쉬폰 속지 이중 커튼', '을')} 많이 맞춥니다.` },
-    { q: '얼마나 걸리나요?', a: `${dongLevel ? `${area}도 ` : ''}국내 맞춤제작 기준 ${FACTS.leadDays}됩니다.` },
+    t === 'blind' ? { q: `${area} ${label} 주문하면 얼마나 걸리나요?`, a: `블라인드는 창 크기·소재 견적 뒤 제작에 들어가고, ${dongLevel ? `${area} ` : ''}설치 일정은 상담 때 함께 잡습니다.` }
+      : { q: `${area} ${label} 주문하면 얼마나 걸리나요?`, a: `${dongLevel ? `${area}도 ` : ''}국내 맞춤제작 기준 ${FACTS.leadDays}됩니다. ${REGION_CHECK[p.word]}만 정해지면 바로 제작에 들어갑니다.` },
   ];
   const faq = rotate([...regionFaq, ...rotate(bank[t], s, 'fq').slice(0, dongLevel ? 2 : 3)], s, 'faq');
 
@@ -417,15 +420,44 @@ export function compose(p: Page) {
     closing: { heading: pick([`${area} 커튼집 상담`, '창 사진부터 보내주세요', `${dong} 맞춤 커튼 상담`], s, 'sch'), text: pick([`창 사진과 가로 길이를 문자(${CONTACT.sms})로 보내주시면 원단과 사이즈를 골라 드립니다.`, `가격·제작 기간은 전화(${CONTACT.phone})로 바로 확인됩니다.`], s, 'sct') },
   };
 
+  // ---- 키워드 7개 전용 층 (lib/words.ts): 도입·확인 항목·종류·순서·FAQ·마무리를 키워드별로 ----
+  const wl = wordLayer({ p, s, area, dong, f, label, dongLevel, c0, cx, apt, hh } as Ctx);
+  const wover = !wl.intro ? {} : {
+    lead: wl.lead, intro: [wl.intro[0], intro[1], wl.intro[1]], rooms: checks(wl.rooms!, 'wchk'), roomsHeading: wl.roomsHeading,
+    types: wl.types, typesHeading: wl.typesHeading, steps: wl.steps, stepsHeading: wl.stepsHeading || STEPS_HEADING[p.word],
+    faq: rotate([regionFaq[1], ...rotate(wl.faq!, s, 'wfq').slice(0, dongLevel ? 3 : 4)], s, 'wfaq'),
+    closing: wl.closing, priceNote: wl.priceNote, ...(wl.productsHeading ? { productsHeading: wl.productsHeading } : {}),
+  };
+
+  // ---- 시군구 페이지: 동별 공동주택·세대 표 (같은 키워드의 동 페이지로 링크 — 허브 → 동 3클릭) ----
+  const kids = dongLevel ? [] : Array.from(new Map(ALL_PAGES.filter((x) => x.parent === nearParent && (x.level === '동' || x.level === '읍면')).map((x) => [x.region, x])).values());
+  const openSame = new Map(OPEN_PAGES.filter((x) => x.word === p.word && x.parent === nearParent).map((x) => [x.region, x.slug]));
+  const dongRows = kids.map((x) => { const a = aptsOf(x); return { name: x.region.split(' ').slice(-1)[0], count: a?.count || 0, households: a?.households || 0, hhTotal: a?.hh?.total || 0, one: a?.hh?.one ?? null, slug: openSame.get(x.region) || '' }; })
+    .filter((r) => r.hhTotal || r.households).sort((a, b) => b.households - a.households || b.hhTotal - a.hhTotal).slice(0, 12);
+  const dongTable = dongRows.length >= 3 ? {
+    heading: pick([`${f.name} 동네별 공동주택과 세대`, `${f.name} 안 동네별로 봅니다`, `${f.name} ${label}, 동네별 단지 수`], s, 'dth'),
+    note: pick([
+      `${f.name} 안 동네별 K-apt 등록 단지와 주민등록 세대(2026년 9월)입니다. 세대수 많은 순이고, 동 이름을 누르면 그 동네 ${label} 페이지로 갑니다.`,
+      `단지가 많은 동네일수록 같은 평형 창이 반복돼 ${label} 사이즈 고르기가 빠릅니다. 동 이름을 누르면 ${f.name} 안 그 동네 ${label} 안내로 이어집니다.`,
+    ], s, 'dtn'),
+    rows: dongRows,
+  } : undefined;
+
   return {
     topic: t, facts: f, area, title, description, lead,
     eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
-    specs: [['지역', area], ['많이 맞추는 곳', f.room], ['상담', `${CONTACT.phone} · 문자 ${CONTACT.sms}`]] as [string, string][],
+    specs: [['지역', area], SPEC2[p.word] || ['많이 맞추는 곳', f.room], ['상담', `${CONTACT.phone} · 문자 ${CONTACT.sms}`]] as [string, string][],
     intro, region, products, lightOn, baKey, heroKey: pick(['d', 'e', 'f'], s, 'hero'), steps, faq, cases, rooms, types, nearby,
     typesHeading: t === 'blind' ? pick([`${area}에서 많이 다는 블라인드`, '블라인드 종류', `${f.room}에 맞는 블라인드`], s, 'th') : pick(['원단 단계', `${area} 커튼 원단 고르기`, '쉬폰부터 암막까지'], s, 'th'),
     roomsHeading: pick([`${area} 공간별 고르는 법`, `${f.room}부터 고릅니다`, '방마다 다르게'], s, 'rmh'),
     priceNote: t === 'blind' ? pick(['블라인드는 공식몰에 정가 상품이 없어 창 크기·소재 상담 뒤 견적을 드립니다.', `${area} 블라인드 견적은 창 개수와 소재를 듣고 드립니다.`], s, 'pn') : '공식몰 표기 가격, 레일포함 풀세트 · 가로 사이즈 기준. 정확한 금액은 사이즈별로 다릅니다.',
-    closing: { heading: pick([`${area} ${label} 상담`, `${f.room} 창 길이부터 알려주세요`, `${area}, 맞춤 커튼 3일`], s, 'ch'), text: pick([`창 사진과 가로 길이를 문자(${CONTACT.sms})로 보내주시면 제품과 사이즈를 골라 드립니다.`, `${area} ${f.room} 창 사진 한두 장과 가로 길이면 충분합니다. 문자 ${CONTACT.sms}.`, `${label} 고민은 전화(${CONTACT.phone})가 가장 빠릅니다. 창 사진은 문자로 받습니다.`], s, 'ct') },
+    closing: { heading: pick([`${area} ${label} 상담`, `${f.room} 창 ${label}, 길이부터 알려주세요`, `${area} ${label}, ${t === 'blind' ? '견적은 창 사진으로' : '맞춤 제작 3일'}`], s, 'ch'), text: pick([`${label} 창 사진과 가로 길이를 문자(${CONTACT.sms})로 보내주시면 제품과 사이즈를 골라 드립니다.`, `${area} ${f.room} 창 사진 한두 장과 가로 길이면 ${label} 상담은 충분합니다. 문자 ${CONTACT.sms}.`, `${label} 고민은 전화(${CONTACT.phone})가 가장 빠릅니다. 창 사진은 문자로 받습니다.`], s, 'ct') },
+    cta: CTA[p.word] || '창 사진과 가로 길이만 보내주세요.',
+    stepsHeading: STEPS_HEADING[p.word] || '주문부터 설치까지',
+    lightSub: LIGHT_SUB[p.word] || LIGHT_SUB['커튼'],
+    productsHeading: PRODUCTS_HEADING(p.word, area),
+    dongTable,
     ...over,
+    ...wover,
   };
 }

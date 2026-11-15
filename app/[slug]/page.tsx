@@ -83,6 +83,21 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
           )}
         </section>
 
+        {c.dongTable && (
+          <section className="sec">
+            <SectionHead no={no()} title={c.dongTable.heading} sub={c.dongTable.note} />
+            <div className="apt-wrap" data-reveal>
+              <table className="apt-table">
+                <caption>{c.facts.name} 동네별 공동주택 단지(K-apt 2026.10) · 주민등록 세대(행정안전부 2026.09) · 세대수 많은 순</caption>
+                <thead><tr><th scope="col">동네</th><th scope="col">등록 단지</th><th scope="col">단지 세대</th><th scope="col">주민등록 세대</th><th scope="col">1인 세대</th></tr></thead>
+                <tbody>{c.dongTable.rows.map((r) => (
+                  <tr key={r.name}><th scope="row">{r.slug ? <Link href={`/${r.slug}/`}>{r.name} {p.word}</Link> : r.name}</th><td>{r.count ? `${r.count}곳` : '-'}</td><td>{r.households ? r.households.toLocaleString() : '-'}</td><td>{r.hhTotal ? r.hhTotal.toLocaleString() : '-'}</td><td>{r.one !== null ? `${r.one}%` : '-'}</td></tr>
+                ))}</tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
         <section className="sec">
           <SectionHead no={no()} title={c.roomsHeading} />
           <ol className="rooms reveal-group">{c.rooms.map((r, i) => <li key={r.room}><span>{String(i + 1).padStart(2, '0')}</span><h3>{r.room}</h3><p>{r.text}</p></li>)}</ol>
@@ -90,14 +105,14 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
 
         {c.topic !== 'blind' && (
           <section className="sec">
-            <SectionHead no={no()} title="빛을 얼마나 막을지부터" sub="쉬폰은 비침 정도가 세 단계, 겉지는 거실커튼과 암막으로 나뉩니다. 이 페이지에서 소개하는 제품이 진하게 표시됩니다." />
+            <SectionHead no={no()} title="빛을 얼마나 막을지부터" sub={c.lightSub} />
             <LightScale on={c.lightOn} />
           </section>
         )}
 
         {c.products.length > 0 ? (
           <section className="sec" id="products">
-            <SectionHead no={no()} title={c.topic === 'blackout' ? '암막커튼 제품' : `${c.area}에 많이 맞추는 제품`} sub={c.priceNote} />
+            <SectionHead no={no()} title={c.topic === 'blackout' ? '암막커튼 제품' : c.productsHeading} sub={c.priceNote} />
             <div className="rail-nav">
               <button type="button" data-scroll="-1" data-target="prod-rail" aria-label="이전 제품">←</button>
               <button type="button" data-scroll="1" data-target="prod-rail" aria-label="다음 제품">→</button>
@@ -128,14 +143,14 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
 
       <section className="cta-band" data-reveal>
         <div className="wrap cta-band-in">
-          <p>창 사진과 <em>가로 길이</em>만 보내주세요.</p>
+          <p>{c.cta}</p>
           <Actions />
         </div>
       </section>
 
       <div className="wrap content">
         <section className="sec">
-          <SectionHead no={no()} title="주문부터 설치까지" />
+          <SectionHead no={no()} title={c.stepsHeading} />
           <ol className="timeline reveal-group">{c.steps.map((st) => <li key={st.t}><strong>{st.t}</strong><p>{st.d}</p></li>)}</ol>
         </section>
 
