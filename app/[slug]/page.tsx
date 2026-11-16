@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { OPEN_PAGES, getPage, pagePath, pageEncodedPath, canonicalPath, related } from '../../lib/data';
 import { compose } from '../../lib/compose';
 import { BRAND } from '../../lib/site';
-import { breadcrumbJsonLd, faqJsonLd, pageListJsonLd, productListJsonLd } from '../../lib/jsonld';
-import { Actions, BeforeAfter, IconArrow, IconExt, JsonLd, LightScale, OfficialLinks, SectionHead } from '../../components/Common';
+import { breadcrumbJsonLd, faqJsonLd, pageListJsonLd } from '../../lib/jsonld';
+import { Actions, BeforeAfter, CallButton, IconArrow, JsonLd, LightScale, SectionHead } from '../../components/Common';
 
 export const dynamicParams = false;
 
@@ -37,7 +37,6 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
         breadcrumbJsonLd([{ name: '홈', path: '/' }, { name: '지역', path: '/area/' }, { name: p.kw, path }]),
         faqJsonLd(c.faq),
         pageListJsonLd(`${p.kw} 관련 페이지`, [...rel.samePlace, ...rel.sameWord, ...rel.wider].map((x) => ({ name: x.kw, path: pageEncodedPath(x) }))),
-        ...(c.products.length ? [productListJsonLd(c.products)] : []),
       ]} />
 
       <section className="hero">
@@ -53,8 +52,6 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </section>
-
-      <div className="official-band"><div className="wrap"><OfficialLinks /></div></div>
 
       <div className="wrap content">
         <section className="sec">
@@ -119,12 +116,13 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
             </div>
             <div className="rail" id="prod-rail">
               {c.products.map((x, i) => (
-                <a className="prod" key={x.id} href={x.url} target="_blank" rel="noopener" data-reveal style={{ transitionDelay: `${i * 70}ms` }}>
+                <div className="prod" key={x.id} data-reveal style={{ transitionDelay: `${i * 70}ms` }}>
                   <div className="prod-img"><img src={`/images/${x.img}.webp`} alt={`${c.area} ${p.word} ${x.short}`} loading="lazy" /><span className="prod-light">{x.light}</span></div>
-                  <div className="prod-body"><strong>{x.short}</strong><span>레일포함 풀세트 · 형상기억</span><b>{x.price.toLocaleString()}원~</b><em>공식몰에서 보기 <IconExt /></em></div>
-                </a>
+                  <div className="prod-body"><strong>{x.short}</strong><span>레일포함 풀세트 · 형상기억</span><b>{x.price.toLocaleString()}원~</b></div>
+                </div>
               ))}
             </div>
+            <CallButton />
           </section>
         ) : (
           <section className="sec" id="products">
@@ -178,7 +176,6 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
           <h2>{c.closing.heading}</h2>
           <p>{c.closing.text}</p>
           <Actions dark />
-          <OfficialLinks compact />
         </div>
       </section>
     </main>

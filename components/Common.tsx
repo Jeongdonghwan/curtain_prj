@@ -1,4 +1,4 @@
-// 커튼명장 공통 UI — 각진 버튼, 선 아이콘, 번호 머리, 공식 판매처 고정 띠, 전후 비교 슬라이더, 빛 투과 눈금.
+// 커튼명장 공통 UI — 각진 버튼, 선 아이콘, 번호 머리, 전후 비교 슬라이더, 빛 투과 눈금. 공식몰·스마트스토어 링크는 헤더·푸터에만 하나씩.
 import Link from 'next/link';
 import { BRAND, BRAND_EN, CONTACT, BUSINESS, LINKS, UPDATED, tel, smsHref } from '../lib/site';
 import { LIGHT, baCaption } from '../lib/compose';
@@ -22,13 +22,9 @@ export const Actions = ({ dark }: { dark?: boolean }) => (
   </div>
 );
 
-// SEO 페이지마다 고정으로 들어가는 공식 판매처 링크
-export const OfficialLinks = ({ compact }: { compact?: boolean }) => (
-  <div className={`official ${compact ? 'compact' : ''}`}>
-    <span className="official-label">공식 판매처</span>
-    <a href={LINKS.home} target="_blank" rel="noopener"><b>커튼명장 공식몰</b><span>curtainmaster.co.kr</span><IconExt /></a>
-    <a href={LINKS.store} target="_blank" rel="noopener"><b>네이버 스마트스토어</b><span>smartstore.naver.com/curtainmaster</span><IconExt /></a>
-  </div>
+// 제품 레일 아래 전화 상담 버튼 하나 (제품 카드는 바깥으로 연결하지 않는다 — 2026-11-16 구글 색인 대응)
+export const CallButton = () => (
+  <div className="actions"><a className="btn-primary" href={tel}><IconPhone /><span>전화 상담 {CONTACT.phone}</span></a></div>
 );
 
 export const SectionHead = ({ no, title, sub }: { no: string; title: React.ReactNode; sub?: string }) => (
@@ -103,6 +99,5 @@ export const StickyBar = () => (
   <div className="sticky-bar">
     <a href={tel} className="sb-call"><IconPhone /><span><b>전화상담</b><small>{CONTACT.phone}</small></span></a>
     <a href={smsHref} className="sb-sms"><IconMsg /><span><b>문자상담</b><small>{CONTACT.sms}</small></span></a>
-    <a href={LINKS.store} target="_blank" rel="noopener" className="sb-store"><IconExt /><span><b>네이버 스토어</b><small>공식 판매처</small></span></a>
   </div>
 );

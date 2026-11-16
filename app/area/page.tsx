@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { OPEN_PAGES, pagePath, pageEncodedPath } from '../../lib/data';
 import { pageListJsonLd } from '../../lib/jsonld';
 import { BRAND } from '../../lib/site';
-import { JsonLd, OfficialLinks } from '../../components/Common';
+import { JsonLd } from '../../components/Common';
 
 export const metadata: Metadata = {
   title: `서울·경기 지역별 커튼·블라인드 | ${BRAND}`,
@@ -27,7 +27,6 @@ export default function AreaIndex() {
         <p className="hero-label dark">AREA</p>
         <h1 className="page-title">서울·경기 지역별 안내</h1>
         <p className="prose-p">{BRAND} 커튼·블라인드 지역 안내 페이지입니다. 지금 {pages.length.toLocaleString()}개가 열려 있습니다.</p>
-        <OfficialLinks />
         {['서울', '경기'].map((sd) => (
           <section key={sd} className="sec">
             <h2 className="area-h">{sd}</h2>

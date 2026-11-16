@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getPosts, postPath, postEncPath, postImage } from '../../lib/blog';
 import { BRAND } from '../../lib/site';
 import { pageListJsonLd } from '../../lib/jsonld';
-import { IconArrow, JsonLd, OfficialLinks } from '../../components/Common';
+import { IconArrow, JsonLd } from '../../components/Common';
 
 export const metadata: Metadata = {
   title: `커튼 가이드 | 커튼·블라인드 고르는 법과 실측 · ${BRAND}`,
@@ -21,6 +21,7 @@ export default function Blog() {
         <p className="hero-label dark">GUIDE</p>
         <h1 className="page-title">커튼 가이드</h1>
         <p className="prose-p">맞춤 커튼·블라인드를 주문하기 전에 자주 묻는 것들을 {BRAND}가 정리했습니다.</p>
+        <h2 className="area-h">실측·원단·레일·설치·관리 순으로 읽는 글</h2>
         <ul className="post-list">
           {posts.map((p) => (
             <li key={p.slug} data-reveal>
@@ -32,7 +33,6 @@ export default function Blog() {
             </li>
           ))}
         </ul>
-        <OfficialLinks />
       </div>
     </main>
   );

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { getPosts, getPost, postPath, postEncPath, postImage } from '../../../lib/blog';
 import { BRAND, BUSINESS, SITE_URL } from '../../../lib/site';
 import { breadcrumbJsonLd, pageListJsonLd } from '../../../lib/jsonld';
-import { Actions, IconArrow, JsonLd, OfficialLinks, SectionHead } from '../../../components/Common';
+import { Actions, IconArrow, JsonLd, SectionHead } from '../../../components/Common';
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -60,7 +60,6 @@ export default function PostPage({ params }: { params: { slug: string } }) {
           <h2>창 크기만 알려주시면 견적을 드립니다</h2>
           <p>가로·세로 실측값과 공간을 전화나 문자로 보내주세요. 원단과 레일까지 맞춰 안내합니다.</p>
           <Actions dark />
-          <OfficialLinks compact />
         </div>
       </section>
     </main>

@@ -1,7 +1,7 @@
 // 소개 — 사실만 평서문으로 (무엇을·어디서·어떻게 연락). site.ts 에 있는 것만 쓴다. 없는 정보는 줄을 내지 않는다.
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BRAND, BUSINESS, CONTACT, FACTS, LINKS, UPDATED, tel, smsHref } from '../../lib/site';
+import { BRAND, BUSINESS, CONTACT, FACTS, UPDATED, tel, smsHref } from '../../lib/site';
 import { breadcrumbJsonLd } from '../../lib/jsonld';
 import { JsonLd } from '../../components/Common';
 
@@ -25,7 +25,7 @@ export default function About() {
         <p className="prose-p">{BUSINESS.name || BRAND}은 형상기억 맞춤제작 커튼·블라인드를 국내에서 맞춤제작해 판매합니다.</p>
         <section className="sec">
           <h2 className="area-h">하는 일</h2>
-          <p className="prose-p">커튼·블라인드를 주문 치수에 맞춰 제작하고 <a href={LINKS.home} target="_blank" rel="noopener">공식몰 curtainmaster.co.kr</a>과 <a href={LINKS.store} target="_blank" rel="noopener">네이버 스마트스토어</a>에서 판매합니다.</p>
+          <p className="prose-p">커튼·블라인드를 주문 치수에 맞춰 제작하고 공식몰(curtainmaster.co.kr)과 네이버 스마트스토어에서 판매합니다. 상담은 전화 {CONTACT.phone}, 문자 {CONTACT.sms}로 받습니다.</p>
           <p className="prose-p">공식몰 표기로는 국내 맞춤제작 기준 {FACTS.leadDays}이고, {FACTS.freeItems}입니다. 상품 가격과 구성은 공식몰 표기 기준입니다.</p>
         </section>
         <section className="sec">

@@ -1,5 +1,5 @@
 // 사이트 설정 — 연락처·고정 링크·브랜드 사실. 출처: curtainmaster.co.kr (2026-10-26 확인)
-// SEO 페이지마다 공식몰·스마트스토어 링크가 고정으로 들어간다(헤더·히어로 아래 띠·푸터·구조화 데이터 sameAs).
+// 공식몰·스마트스토어 링크는 헤더 메뉴·푸터에 하나씩만, 구조화 데이터는 sameAs 로만 (2026-11-16 구글 색인 대응 — 지역 페이지가 바깥으로 보내는 문 역할을 하지 않게).
 
 export const SITE_URL = process.env.SITE_URL || 'https://curtainblind.co.kr';
 export const BRAND = '커튼명장';

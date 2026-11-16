@@ -5,7 +5,7 @@ export const businessJsonLd = () => ({
   '@type': 'Store',
   '@id': `${SITE_URL}/#store`,
   name: BRAND,
-  url: LINKS.home,
+  url: `${SITE_URL}/`, // 이 사이트가 주소. 공식몰·스마트스토어는 sameAs 로만
   image: `${SITE_URL}/images/ba-a-after.webp`,
   telephone: CONTACT.phone,
   email: BUSINESS.email,
@@ -34,13 +34,4 @@ export const pageListJsonLd = (name: string, items: { name: string; path: string
   itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, url: `${SITE_URL}${it.path}` })),
 });
 
-// 상품 목록 — 실제 공식몰 상품만, 가격은 표기 그대로
-export const productListJsonLd = (items: { name: string; url: string; img: string; price: number }[]) => ({
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  itemListElement: items.map((p, i) => ({
-    '@type': 'ListItem', position: i + 1,
-    item: { '@type': 'Product', name: p.name, url: p.url, image: `${SITE_URL}/images/${p.img}.webp`, brand: { '@type': 'Brand', name: BRAND },
-      offers: { '@type': 'Offer', priceCurrency: 'KRW', price: p.price, url: p.url, availability: 'https://schema.org/InStock' } },
-  })),
-});
+// Product·Offer 구조화 데이터는 넣지 않는다 (2026-11-16): 주소가 공식몰인 상품을 전 페이지에 실으면 판매 중계 페이지로 읽힌다.

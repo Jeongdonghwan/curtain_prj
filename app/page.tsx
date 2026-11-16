@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { PRODUCTS, pagePath, pageEncodedPath, regionHubs } from '../lib/data';
 import { BA_KEYS } from '../lib/compose';
-import { BRAND, FACTS } from '../lib/site';
-import { faqJsonLd, pageListJsonLd, productListJsonLd } from '../lib/jsonld';
-import { Actions, BeforeAfter, IconArrow, IconExt, JsonLd, LightScale, OfficialLinks, SectionHead } from '../components/Common';
+import { BRAND, CONTACT, FACTS } from '../lib/site';
+import { faqJsonLd, pageListJsonLd } from '../lib/jsonld';
+import { Actions, BeforeAfter, CallButton, IconArrow, JsonLd, LightScale, SectionHead } from '../components/Common';
 
 const WHY = [
   ['국내 맞춤제작', '가로 사이즈를 고르면 높이는 해피콜 상담 뒤 공간에 맞춰 만듭니다.'],
@@ -14,7 +14,7 @@ const WHY = [
   ['전문 설치', '지역별 설치 일정은 상담 뒤 안내합니다.'],
 ];
 const FAQ = [
-  { q: '주문은 어떻게 하나요?', a: '가로 실측 사이즈를 골라 공식몰이나 스마트스토어에서 구매하시면, 높이는 해피콜 상담 뒤 맞춤 제작합니다.' },
+  { q: '주문은 어떻게 하나요?', a: `창 사진과 가로 길이를 전화(${CONTACT.phone})나 문자(${CONTACT.sms})로 보내주시면 제품과 사이즈를 골라 드리고, 높이는 해피콜 상담 뒤 맞춤 제작합니다.` },
   { q: '제작 기간은요?', a: '국내 맞춤제작 기준 평균 3일 이내 출고됩니다.' },
   { q: '레일도 같이 오나요?', a: '레일포함 풀세트이고 자석끈과 커튼레일이 무료로 제공됩니다.' },
   { q: '방문 실측이 되나요?', a: '방문 가능 지역은 지역별 담당자가 무료 실측과 견적 상담을 진행합니다.' },
@@ -29,7 +29,7 @@ export default function Home() {
   ];
   return (
     <main>
-      <JsonLd data={[faqJsonLd(FAQ), productListJsonLd(PRODUCTS), pageListJsonLd('서울·경기 지역별 커튼', hubs.flatMap((h) => h.pages).slice(0, 30).map((x) => ({ name: x.kw, path: pageEncodedPath(x) })))]} />
+      <JsonLd data={[faqJsonLd(FAQ), pageListJsonLd('서울·경기 지역별 커튼', hubs.flatMap((h) => h.pages).slice(0, 30).map((x) => ({ name: x.kw, path: pageEncodedPath(x) })))]} />
       <section className="hero hero-home">
         <img className="hero-bg" src="/images/ba-f-after.webp" alt="커튼명장 거실 쉬폰 커튼 시공 사진" fetchPriority="high" />
         <div className="wrap">
@@ -41,8 +41,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <div className="official-band"><div className="wrap"><OfficialLinks /></div></div>
 
       <div className="wrap content">
         <section className="sec">
@@ -62,14 +60,15 @@ export default function Home() {
               <div className="prod-group-head" data-reveal><h3>{g.title}</h3><p>{g.note}</p></div>
               <div className="rail">
                 {PRODUCTS.filter((x) => x.kind === g.key).map((x, i) => (
-                  <a className="prod" key={x.id} href={x.url} target="_blank" rel="noopener" data-reveal style={{ transitionDelay: `${(i % 4) * 70}ms` }}>
+                  <div className="prod" key={x.id} data-reveal style={{ transitionDelay: `${(i % 4) * 70}ms` }}>
                     <div className="prod-img"><img src={`/images/${x.img}.webp`} alt={`${BRAND} ${x.short}`} loading="lazy" /><span className="prod-light">{x.light}</span></div>
-                    <div className="prod-body"><strong>{x.short}</strong><span>레일포함 풀세트 · 형상기억</span><b>{x.price.toLocaleString()}원~</b><em>공식몰에서 보기 <IconExt /></em></div>
-                  </a>
+                    <div className="prod-body"><strong>{x.short}</strong><span>레일포함 풀세트 · 형상기억</span><b>{x.price.toLocaleString()}원~</b></div>
+                  </div>
                 ))}
               </div>
             </div>
           ))}
+          <CallButton />
         </section>
       </div>
 
@@ -110,7 +109,6 @@ export default function Home() {
           <h2>3일 후, 창이 달라집니다</h2>
           <p>창 사진과 가로 길이를 문자로 보내주시면 제품과 사이즈를 골라 드립니다.</p>
           <Actions dark />
-          <OfficialLinks compact />
         </div>
       </section>
     </main>
