@@ -4,11 +4,11 @@
 
 ## 현재 상태 (2026-10-27)
 - 전국 커튼·블라인드 키워드 31,023개(`keywords/커튼블라인드_전국키워드.xlsx`) 중 서울·경기 5,982페이지가 빌드됨. 1단계(시군구) 1,806 → 2·3단계(동) 순차 오픈.
-- 로컬 확인: `OPEN_WAVE=31 npx next build`(전체, 기본값 1은 오픈일 묶음만) 후 `cd out && python -I -m http.server 18933 --bind 127.0.0.1`
+- 배포는 GitHub Actions(2026-11-16~): main 에 푸시하면 3분 뒤 deploy 브랜치 갱신, 서버는 매시 받음(즉시: `cd /var/www/curtain && git fetch -q origin deploy && git reset -q --hard origin/deploy`). 로컬 전체 빌드는 PC 가 끊기므로 피하고, 꼭 필요하면 `OPEN_WAVE=2 npx next build`(표본)로.
 - 색인 지표(`python -I scripts/dup_check.py`): 같은 문장 25%, 같은 구 안 동 페이지끼리 21%(이전 49%) — 둘 다 30% 이하 통과. 바이그램 0.52.
 - 동 페이지에 K-apt 단지 + 행정안전부 주민등록 세대 사실을 붙임 (`data/dong-apts.json`, `scripts/build_dong_apts.py`).
 - (2026-11-16) 같은 지역 안 키워드 페이지끼리 44%→24%로 낮춤: 키워드별 층 `lib/words.ts`, 시군구에 동별 표. 측정은 `scripts/dup_same_region.py`. 2026-11-15 전부 오픈(31단계), IndexNow 키 파일 루트에 있음.
-- 블로그: 45편(11-02~12-01, 1·2편/일) + 추가 126편(11-08~11-28, 6편/일 오전 3·오후 3, `time: 13:00`). 오후 공개는 작업 스케줄러 "post-launch pm curtain"(13:30, `daily.sh curtain`) — 11-28 뒤 삭제.
+- 블로그: 45편(11-02~12-01, 1·2편/일) + 추가 126편(11-08~11-28, 6편/일 오전 3·오후 3, `time: 13:00`). 오후 공개는 Actions 의 13:10 KST cron — 11-28 뒤 워크플로에서 그 줄 삭제(PC 작업 "post-launch pm curtain" 은 사용자가 삭제).
 
 ## 다음 할 일
 1. (완료 2026-10-27) 동 페이지 보강 — 같은 구 안 동끼리 21%. 남은 것: 바이그램 0.52를 0.5 아래로, 단지 못 맞춘 동 227곳(행정동↔법정동 매핑표 있으면 개선).

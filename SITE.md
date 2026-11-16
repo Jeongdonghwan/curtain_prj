@@ -20,7 +20,7 @@ curtainmaster.co.kr(커튼명장)을 바탕으로 한 메인 홈 + 서울·경�
 `wave` = 오픈일부터 며칠째 + 1. 빌드는 `OPEN_WAVE` 이하만. 오늘 값: `python -I scripts/drip/drip_status.py data/drip.json`
 - 묶음 1~3 (5,982): **10일 안에 4번** — D0 1,496 · D3 1,564 · D6 1,566 · D9 1,565 (wave 1·4·7·10)
 - 묶음 4 (2,088): **30일간 새 페이지** — D1~D30 하루 69~70개 (wave 2~31)
-- 매일 06:00 `C:\side_Prj\_ops\daily.sh` 가 GitHub main 을 받아 오늘 wave 로 빌드·deploy 브랜치 푸시, 서버는 crontab 매시간 받음
+- (2026-11-16부터) 빌드·배포는 GitHub Actions(`.github/workflows/deploy.yml`): main 푸시마다 + 06:00·13:10 KST. `scripts/deploy.sh` 가 deploy 브랜치로 푸시, 서버는 crontab 매시간 받음. PC 의 `_ops/daily.sh` 목록에서는 뺐다. `.lastmod.json`(주소 처음 본 날)은 deploy 브랜치 루트에 실어 이어 쓴다. 로컬에서 빌드할 일 없음 — 한 번 3분
 - 수집이 0이면 `data/drip.json` 의 `hold` 에 날짜를 넣어 오픈만 멈춘다. 열린 페이지는 닫지 않는다
 - (변경 2026-11-13) 사용자 요청으로 속도를 올려 `drip.json` 에 `"wave": 31` 고정 → 2026-11-14 06:00 빌드에서 남은 묶음 4(1,113)까지 전부 열림. 블로그 글이 12-01까지 열리므로 그 뒤에 daily.sh 목록에서 curtain 을 뺀다
 
