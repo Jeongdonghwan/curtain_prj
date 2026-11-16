@@ -59,12 +59,12 @@ curtainmaster.co.kr(커튼명장)을 바탕으로 한 메인 홈 + 서울·경�
 - 로컬 점검은 표본 빌드: `SAMPLE_REGIONS=12 OPEN_WAVE=38 npx next build`(지역 12곳 × 전 단어 ≈ 440쪽) → `check_all` + `python -I scripts/dup_new_words.py out`(축 간·지역 간)
 
 ### 오픈 일정 (사용자 결정: 7일 안에 전부)
-`data/drip.json` 의 `extra` = wave 32~38 ↔ 2026-11-17~23. `drip_status.py` 가 날짜 지난 extra 를 열고, `sitemap.ts` 는 그 날짜를 lastmod 로, `postbuild.py` 의 `.ops.json` schedule 에 날짜별 수가 들어간다. 06:00 KST Actions 빌드에서 열림.
+`data/drip.json` 의 `extra` = wave 32~38 ↔ 2026-11-16~22. `drip_status.py` 가 날짜 지난 extra 를 열고, `sitemap.ts` 는 그 날짜를 lastmod 로, `postbuild.py` 의 `.ops.json` schedule 에 날짜별 수가 들어간다. 06:00 KST Actions 빌드에서 열림.
 
 | 날짜 | wave | 사이트맵 기준 | 제작(변형 포함) |
 |---|---|---|---|
-| 11-17 | 32 | 2,288 (시군구 17단어 1,394 포함) | 3,087 |
-| 11-18~23 | 33~38 | 각 2,287 | 각 2,287 |
+| 11-16 | 32 | 2,288 (시군구 17단어 1,394 포함) | 3,087 |
+| 11-17~22 | 33~38 | 각 2,287 | 각 2,287 |
 
 ### 배포 방식 변경 (`scripts/deploy.sh`)
 2만 쪽(쪽당 HTML 약 120KB → 약 3GB)이 되어 매번 orphan 커밋을 force push 하지 않는다. deploy 브랜치를 `--depth 1 --filter=blob:none --no-checkout` 으로 받아 인덱스만 채우고 out/ 을 작업 트리로 옮겨 `git add -A` → 바뀐 파일만 새 객체가 되어 올라간다. 바뀐 파일이 없으면 푸시 생략. Actions timeout 150분, Node 힙 10GB.

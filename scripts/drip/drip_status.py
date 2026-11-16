@@ -7,7 +7,7 @@ import datetime as dt, json, sys
 
 
 def wave(cfg, today):
-    # extra: [{wave, date}] — 날짜가 지난 추가 묶음 (2026-11-17~23 새 축 21단어, wave 32~38). hold 가 있으면 그 날짜까지만
+    # extra: [{wave, date}] — 날짜가 지난 추가 묶음 (2026-11-16~22 새 축 21단어, wave 32~38). hold 가 있으면 그 날짜까지만
     cap = dt.date.fromisoformat(cfg['hold']) if cfg.get('hold') else today
     extra = max([e['wave'] for e in cfg.get('extra', []) if dt.date.fromisoformat(e['date']) <= min(today, cap)], default=0)
     if cfg.get('wave'): return max(cfg['wave'], extra)  # 고정 단계 (2026-11-13 사용자 결정: 남은 4단계 동 페이지를 한 번에 연다)
