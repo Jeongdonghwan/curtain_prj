@@ -29,8 +29,8 @@ export const FACTS = {
   freeItems: '자석끈 + 커튼레일 무료',
 };
 
-// 순차 오픈: wave = 오픈일부터 며칠째 + 1 (data/site-pages.json). 1·4·7·10 = 기존 5,982 를 25%씩, 2~31 = 새 페이지 하루 약 70개
-// 오늘 값은 python -I scripts/drip/drip_status.py data/drip.json. 전체 빌드는 OPEN_WAVE=31
+// 순차 오픈: wave = 오픈일부터 며칠째 + 1 (data/site-pages.json). 1·4·7·10 = 기존 5,982 를 25%씩, 2~31 = 새 페이지 하루 약 70개,
+// 32~38 = 새 축 21단어 16,809쪽을 2026-11-17~23 7일에 (날짜는 data/drip.json extra). 오늘 값은 python -I scripts/drip/drip_status.py data/drip.json. 전체 빌드는 OPEN_WAVE=38
 export const OPEN_WAVE = Number(process.env.OPEN_WAVE || 1);
 // 표기만 다른 페이지(강남/강남구)는 대표 페이지로 canonical + 사이트맵 제외
 export const UPDATED = '2026-11-16'; // content revision date - bump when page text changes

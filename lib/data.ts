@@ -7,7 +7,7 @@ import { OPEN_WAVE, MERGE_VARIANTS } from './site';
 
 export interface Page {
   no: number; kw: string; slug: string; word: string; region: string; level: string;
-  sido: string; parent: string; wave: number; variantOf?: string;
+  sido: string; parent: string; stage: number; wave: number; variantOf?: string;
 }
 export interface Facts { kw: string; name: string; homes: string; windows: string; spots: string[]; room: string }
 export interface Product { id: string; name: string; short: string; kind: string; light: string; price: number; url: string; img: string }
@@ -22,7 +22,10 @@ export interface DongApts {
 }
 
 export const ALL_PAGES = pagesData.pages as Page[];
-export const OPEN_PAGES = ALL_PAGES.filter((p) => p.wave <= OPEN_WAVE);
+// SAMPLE_REGIONS=<n>: 로컬 점검용 표본 빌드 — 지역 n곳(해시로 고정 선택)의 전 단어 페이지만 만든다. 배포 빌드에서는 두지 않는다
+const SAMPLE = Number(process.env.SAMPLE_REGIONS || 0);
+const sampleRegions = (() => { if (!SAMPLE) return null; const rs = Array.from(new Set(ALL_PAGES.filter((p) => !p.variantOf).map((p) => p.region))); const step = Math.ceil(rs.length / SAMPLE); return new Set(rs.filter((_, i) => i % step === 0)); })();
+export const OPEN_PAGES = ALL_PAGES.filter((p) => p.wave <= OPEN_WAVE && (!sampleRegions || sampleRegions.has(p.region) || (p.variantOf && sampleRegions.has(ALL_PAGES.find((x) => x.slug === p.variantOf)!.region))));
 const openSet = new Set(OPEN_PAGES.map((p) => p.slug));
 export const PRODUCTS = productData.products as Product[];
 const FACTS = regionData.regions as Facts[];
@@ -63,7 +66,7 @@ export function related(p: Page) {
   const pool = OPEN_PAGES.filter((x) => x.slug !== p.slug && !x.variantOf);
   const rot = <T,>(arr: T[], n: number) => { if (!arr.length) return arr; const k = hash(p.slug) % arr.length; return [...arr.slice(k), ...arr.slice(0, k)].slice(0, n); };
   return {
-    samePlace: pool.filter((x) => x.region === p.region).slice(0, 14),
+    samePlace: rot(pool.filter((x) => x.region === p.region), 16),  // 지역 하나에 30단어 — 페이지마다 다른 16개를 보여 모든 단어가 안쪽 링크를 받는다
     sameWord: rot(pool.filter((x) => x.word === p.word && x.parent === p.parent && x.region !== p.region), 10),
     wider: rot(pool.filter((x) => x.word === p.word && x.sido === p.sido && x.level !== '동' && x.level !== '읍면' && x.region !== p.region), 8),
   };

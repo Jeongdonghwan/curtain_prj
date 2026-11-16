@@ -10,7 +10,8 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 
 export function GET() {
   const date = new Date().toUTCString();
-  const items = OPEN_PAGES.filter(inSitemap).map((p) => {
+  // 2만 쪽을 다 넣으면 RSS 가 수 MB — 최근 묶음(wave 큰 순)부터 1,000개만 (서치어드바이저 RSS 는 새 글 알림용)
+  const items = [...OPEN_PAGES.filter(inSitemap)].sort((a, b) => b.wave - a.wave).slice(0, 1000).map((p) => {
     const c = compose(p);
     const url = `${SITE_URL}${pageEncodedPath(p)}`;
     return `<item><title>${esc(c.title)}</title><link>${url}</link><description>${esc(c.description)}</description><pubDate>${date}</pubDate><guid isPermaLink="true">${url}</guid></item>`;
