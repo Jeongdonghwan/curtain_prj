@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { SITE_URL } from '../lib/site';
+import { SITE_URL, UPDATED } from '../lib/site';
 import { getPosts, postEncPath } from '../lib/blog';
 import { OPEN_PAGES, pageEncodedPath, inSitemap } from '../lib/data';
 
@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   // 열린 날을 lastmod 로. 전 페이지에 빌드 시각을 찍으면 수집 우선순위 신호가 사라진다 (seo-monitor). wave 1~15 는 하루 한 단계, 16~31 은 2026-11-15 에 한 번에 열림
   const LAUNCH = Date.UTC(2026, 9, 30);
-  const opened = (wave: number) => new Date(LAUNCH + (Math.min(wave, 17) - 1) * 864e5);
+  const opened = (wave: number) => new Date(Math.max(LAUNCH + (Math.min(wave, 17) - 1) * 864e5, Date.parse(UPDATED)));  // 본문 개정일(UPDATED)이 더 늦으면 그날
   return [
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: 'weekly', priority: 1 },
     { url: `${SITE_URL}/area/`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
