@@ -1,0 +1,37 @@
+# 빌드·배포를 GitHub 가 대신 한다 (PC 의 06:00 daily.sh 대체).
+#   - main 에 푸시될 때마다, 그리고 매일 06:00 KST(블로그 글·오픈 묶음 반영) + 13:10 KST(오후 글, 11-28 뒤 삭제)
+#   - scripts/deploy.sh 가 out/ 을 deploy 브랜치로 force push → 서버 cron 이 매시 받아간다
+name: deploy
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 21 * * *'   # 06:00 KST
+    - cron: '10 4 * * *'   # 13:10 KST
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: npm ci
+      - name: build + push deploy
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          git config user.name deploy-bot
+          git config user.email deploy-bot@users.noreply.github.com
+          git remote set-url origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          read -r WAVE POST URL < <(python -I scripts/drip/drip_status.py data/drip.json | tail -1 | sed 's/[A-Z]*=//g')
+          echo "WAVE=$WAVE URL=$URL"
+          bash scripts/deploy.sh "$WAVE" "$URL"
