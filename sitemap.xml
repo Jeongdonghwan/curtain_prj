@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<sitemap><loc>https://curtainblind.co.kr/sitemap-core.xml</loc><lastmod>2026-11-17</lastmod></sitemap>
-<sitemap><loc>https://curtainblind.co.kr/sitemap-blog.xml</loc><lastmod>2026-11-17</lastmod></sitemap>
+<sitemap><loc>https://curtainblind.co.kr/sitemap-core.xml</loc><lastmod>2026-11-18</lastmod></sitemap>
+<sitemap><loc>https://curtainblind.co.kr/sitemap-blog.xml</loc><lastmod>2026-11-18</lastmod></sitemap>
 <sitemap><loc>https://curtainblind.co.kr/sitemap-kw-1.xml</loc><lastmod>2026-11-16</lastmod></sitemap>
 <sitemap><loc>https://curtainblind.co.kr/sitemap-kw-2.xml</loc><lastmod>2026-11-16</lastmod></sitemap>
 <sitemap><loc>https://curtainblind.co.kr/sitemap-kw-3.xml</loc><lastmod>2026-11-16</lastmod></sitemap>
@@ -11,5 +11,7 @@
 <sitemap><loc>https://curtainblind.co.kr/sitemap-kw-7.xml</loc><lastmod>2026-11-16</lastmod></sitemap>
 <sitemap><loc>https://curtainblind.co.kr/sitemap-kw-8.xml</loc><lastmod>2026-11-17</lastmod></sitemap>
 <sitemap><loc>https://curtainblind.co.kr/sitemap-kw-9.xml</loc><lastmod>2026-11-17</lastmod></sitemap>
-<sitemap><loc>https://curtainblind.co.kr/sitemap-kw-10.xml</loc><lastmod>2026-11-17</lastmod></sitemap>
+<sitemap><loc>https://curtainblind.co.kr/sitemap-kw-10.xml</loc><lastmod>2026-11-18</lastmod></sitemap>
+<sitemap><loc>https://curtainblind.co.kr/sitemap-kw-11.xml</loc><lastmod>2026-11-18</lastmod></sitemap>
+<sitemap><loc>https://curtainblind.co.kr/sitemap-kw-12.xml</loc><lastmod>2026-11-18</lastmod></sitemap>
 </sitemapindex>
