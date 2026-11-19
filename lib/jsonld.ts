@@ -27,11 +27,11 @@ export const faqJsonLd = (faqs: { q: string; a: string }[]) => ({
 });
 
 // 캐러셀용 페이지 목록 — 같은 도메인 절대 URL(한글은 인코딩된 경로를 넘긴다)
-export const pageListJsonLd = (name: string, items: { name: string; path: string }[]) => ({
+export const pageListJsonLd = (name: string, items: { name: string; path: string; image?: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name,
-  itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, url: `${SITE_URL}${it.path}` })),
+  itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, url: `${SITE_URL}${it.path}`, ...(it.image ? { image: `${SITE_URL}${it.image}` } : {}) })),
 });
 
 // Product·Offer 구조화 데이터는 넣지 않는다 (2026-11-16): 주소가 공식몰인 상품을 전 페이지에 실으면 판매 중계 페이지로 읽힌다.

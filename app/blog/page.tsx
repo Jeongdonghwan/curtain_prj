@@ -17,7 +17,7 @@ export default function Blog() {
   return (
     <main>
       <div className="wrap content page-top">
-        <JsonLd data={pageListJsonLd(`${BRAND} 커튼 가이드`, posts.map((p) => ({ name: p.title, path: postEncPath(p) })))} />
+        <JsonLd data={pageListJsonLd(`${BRAND} 커튼 가이드`, posts.map((p) => ({ name: p.title, path: postEncPath(p), image: postImage(p) })))} />
         <p className="hero-label dark">GUIDE</p>
         <h1 className="page-title">커튼 가이드</h1>
         <p className="prose-p">맞춤 커튼·블라인드를 주문하기 전에 자주 묻는 것들을 {BRAND}가 정리했습니다.</p>
