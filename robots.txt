@@ -1,4 +1,6 @@
 User-Agent: *
 Allow: /
+Disallow: /*?_rsc=
+Disallow: /*/index.txt
 
 Sitemap: https://curtainblind.co.kr/sitemap.xml
