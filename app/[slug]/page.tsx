@@ -90,8 +90,19 @@ function AxisSection({ sec, no, alt, first, baKey, area }: { sec: Section; no: s
   }
 }
 
+// h2 에 키워드(2026-11-24) — 절 제목 앞에 키워드를 붙인다. 제목이 지역 이름으로 시작하면 그 부분은 뺀다. 본문 문장은 그대로.
+const kwT = (p: Page, title: string, on: boolean) => {
+  if (!on || title.includes(p.kw)) return title;
+  if (/자주 묻는 질문|질문$/.test(title)) return `${p.kw} 자주 묻는 질문`;
+  const toks = Array.from(new Set([p.region, ...p.region.split(' '), p.word])).sort((a, b) => b.length - a.length);
+  let rest = title;
+  for (const k of toks) if (rest.startsWith(`${k} `) || rest.startsWith(`${k},`)) rest = rest.slice(k.length).replace(/^[ ,]+/, '');
+  return `${p.kw}: ${rest}`;
+};
+
 function AxisPage({ p }: { p: Page }) {
-  const c = composeAxis(p);
+  const c0 = composeAxis(p);
+  const c = { ...c0, sections: c0.sections.map((sec, i) => ({ ...sec, heading: kwT(p, sec.heading, [0, 1, 3, 5].includes(i) || sec.kind === 'faq') })) as typeof c0.sections };
   const rel = related(p);
   const path = pageEncodedPath(p);
   let n = 0;
@@ -170,7 +181,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
         </section>
 
         <section className="sec alt">
-          <SectionHead no={no()} title={c.region.heading} />
+          <SectionHead no={no()} title={kwT(p, c.region.heading, true)} />
           <div className="cols">
             <div data-reveal><p className="region-body">{c.region.body}</p>{c.region.nearLine && <p className="region-near">{c.region.nearLine}</p>}</div>
             <dl className="info" data-reveal>{c.region.dl.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
@@ -204,7 +215,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
 
         {c.products.length > 0 ? (
           <section className="sec" id="products">
-            <SectionHead no={no()} title={c.topic === 'blackout' ? '암막커튼 제품' : c.productsHeading} sub={c.priceNote} />
+            <SectionHead no={no()} title={kwT(p, c.topic === 'blackout' ? '암막커튼 제품' : c.productsHeading, true)} sub={c.priceNote} />
             <div className="rail-nav">
               <button type="button" data-scroll="-1" data-target="prod-rail" aria-label="이전 제품">←</button>
               <button type="button" data-scroll="1" data-target="prod-rail" aria-label="다음 제품">→</button>
@@ -221,7 +232,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
           </section>
         ) : (
           <section className="sec" id="products">
-            <SectionHead no={no()} title="블라인드 시공 사례" sub={c.priceNote} />
+            <SectionHead no={no()} title={kwT(p, '블라인드 시공 사례', true)} sub={c.priceNote} />
             <div className="mosaic">{c.cases.map((src, i) => <figure key={src} data-reveal style={{ transitionDelay: `${i * 70}ms` }}><img src={src} alt={`${c.area} ${p.word} 시공 사례`} loading="lazy" /></figure>)}</div>
           </section>
         )}
@@ -229,7 +240,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
 
       <div className="wrap content">
         <section className="sec">
-          <SectionHead no={no()} title={c.typesHeading} />
+          <SectionHead no={no()} title={kwT(p, c.typesHeading, true)} />
           <dl className="types reveal-group">{c.types.map((x) => <div key={x.name}><dt>{x.name}</dt><dd>{x.d}</dd></div>)}</dl>
         </section>
       </div>
@@ -243,7 +254,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
 
       <div className="wrap content">
         <section className="sec">
-          <SectionHead no={no()} title={c.stepsHeading} />
+          <SectionHead no={no()} title={kwT(p, c.stepsHeading, true)} />
           <ol className="timeline reveal-group">{c.steps.map((st) => <li key={st.t}><strong>{st.t}</strong><p>{st.d}</p></li>)}</ol>
         </section>
 
@@ -255,7 +266,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
         )}
 
         <section className="sec" id="faq">
-          <SectionHead no={no()} title="자주 묻는 질문" />
+          <SectionHead no={no()} title={kwT(p, '자주 묻는 질문', true)} />
           <div className="faq">{c.faq.map((f) => <details key={f.q} data-reveal><summary>{f.q}<i /></summary><p>{f.a}</p></details>)}</div>
         </section>
 

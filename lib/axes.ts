@@ -802,8 +802,14 @@ export function composeAxis(p: Page) {
     axis === 'product' ? '맞는 창과 견적 받는 법' : axis === 'space' ? '조합과 가격' : '방법 비교와 고르는 기준',
   ], s, 'ax-h1');
   const fact = c.c0 ? `${c.c0.name} 등 ${apt!.count}개 단지` : c.hh ? `${c.hh.total.toLocaleString()}세대 동네` : f.windows.split(/[,.]/)[0];
-  const descBody = `${area} ${label}. ${fact}. ${w.spec[1]}.`;
-  const description = `${descBody.length > 80 - 15 ? descBody.slice(0, 80 - 16).replace(/[,.·\s]+$/, '') + '.' : descBody} 상담 ${CONTACT.phone}.`;
+  // description 45~80자(2026-11-24): 키워드 + 이 페이지에서 다루는 종류·방법(관련 키워드) + 동네 사실 + 전화
+  const desc0 = [
+    `${p.kw} — ${sp}. ${fact}, 실측 상담 ${CONTACT.phone}`,
+    `${p.kw} — ${sp}. ${fact}, 상담 ${CONTACT.phone}`,
+    `${p.kw} — ${sp}. 실측 상담 ${CONTACT.phone}`,
+    `${p.kw} — ${sp.split('·').slice(0, 2).join('·')}. 실측 상담 ${CONTACT.phone}`,
+  ].find((d) => d.length <= 80) || `${p.kw} 실측 상담 ${CONTACT.phone}`;
+  const description = desc0.length < 45 ? `${desc0.replace(/(, )?(실측 )?상담 [0-9-]+$|, 전화 [0-9-]+$/, '').replace(/[., ]+$/, '')}. ${BRAND} 맞춤 상담 ${CONTACT.phone}` : desc0;
 
   const lead = pick(w.lead(c), s, 'ax-lead');
   const def = w.def(c); def[0] = pick([def[0], w.alt(c)], s, 'ax-alt');

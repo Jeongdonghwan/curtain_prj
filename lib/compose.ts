@@ -108,7 +108,16 @@ export function compose(p: Page) {
     `${p.kw} | ${spot} 등 ${f.name} ${t === 'blind' ? '블라인드' : '커튼'} 상담 ${BRAND}`,
   ], s, 'title');
   const priceLine = t === 'blind' ? '블라인드는 창 크기·소재 상담 후 견적' : t === 'blackout' ? '암막커튼 레일포함 풀세트 140,000원부터' : '쉬폰 80,000원 · 거실·암막 140,000원부터(레일포함 풀세트)';
-  const description = `${area} ${label}. ${c0 ? `${named} 등 ${dong} ${apt!.count}개 단지` : f.windows.split(/[,.]/)[0]}. ${priceLine}. 국내 맞춤제작 ${FACTS.leadDays}, 대표전화 ${CONTACT.phone}.`;
+  // description 45~80자(2026-11-24): 키워드 + 같이 상담하는 관련 키워드 2~3개 + 이 페이지 사실(단지·방) + 전화
+  const relW = (t === 'blind' ? ['롤스크린', '콤비블라인드', '우드블라인드', '버티컬'] : t === 'blackout' ? ['거실커튼', '쉬폰커튼', '형상기억커튼'] : ['암막커튼', '쉬폰커튼', '블라인드', '거실커튼']).filter((x) => !p.kw.replace(/\s/g, '').includes(x)).slice(0, 3);
+  const factD = c0 ? `${c0.name} 등 ${dong} 아파트 창 실측` : `${f.room} 창 실측`;
+  const desc0 = [
+    `${p.kw} — ${relW.join('·')}까지 한 번에 상담. ${factD}, 전화 ${CONTACT.phone}`,
+    `${p.kw} — ${relW.slice(0, 2).join('·')}까지 한 번에 상담. ${factD}, 전화 ${CONTACT.phone}`,
+    `${p.kw} — ${relW.slice(0, 2).join('·')}까지 한 번에 상담. ${f.room} 창 실측, 전화 ${CONTACT.phone}`,
+    `${p.kw} — ${relW[0]}까지 상담. ${f.room} 창 실측, 전화 ${CONTACT.phone}`,
+  ].find((d) => d.length <= 80) || `${p.kw} 실측 상담 ${CONTACT.phone}`;
+  const description = desc0.length < 45 ? `${desc0.replace(/(, )?(실측 )?상담 [0-9-]+$|, 전화 [0-9-]+$/, '').replace(/[., ]+$/, '')}. ${BRAND} 맞춤 상담 ${CONTACT.phone}` : desc0;
 
   // ---- 히어로 ----
   const lead = c0 ? pick([
