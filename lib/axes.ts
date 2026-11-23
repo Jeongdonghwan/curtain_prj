@@ -794,6 +794,13 @@ export function composeAxis(p: Page) {
   const title = pick(axis === 'product' ? [`${p.kw} | 맞는 창과 견적 ${BRAND}`, `${p.kw} — ${area} 상담 ${BRAND}`, `${p.kw} | ${w.spec[1]} ${BRAND}`]
     : axis === 'space' ? [`${p.kw} | ${w.spec[1]} ${BRAND}`, `${p.kw} — ${area} 창에 맞추는 법 ${BRAND}`, `${p.kw} | 조합과 가격 ${BRAND}`]
       : [`${p.kw} | ${w.spec[1]} ${BRAND}`, `${p.kw} — 방법 비교 ${BRAND}`, `${p.kw} | ${area} 상담 ${BRAND}`], s, 'ax-title').slice(0, 60);
+  const sp = w.spec[1].replace(/ \+ /g, '·').replace(/ · /g, '·').replace(/ → /g, '→');
+  const unit = c.c0 ? `${c.c0.name} 같은 단지` : dongLevel ? '우리 집' : `${f.room}`;
+  const h1sub = pick([
+    w.spec[0] === '많이 쓰는 종류' ? `${sp} 중 고르기` : w.spec[0] === '기본 조합' ? `${sp} 조합` : sp,
+    `${unit} 창에 맞추는 법`,
+    axis === 'product' ? '맞는 창과 견적 받는 법' : axis === 'space' ? '조합과 가격' : '방법 비교와 고르는 기준',
+  ], s, 'ax-h1');
   const fact = c.c0 ? `${c.c0.name} 등 ${apt!.count}개 단지` : c.hh ? `${c.hh.total.toLocaleString()}세대 동네` : f.windows.split(/[,.]/)[0];
   const descBody = `${area} ${label}. ${fact}. ${w.spec[1]}.`;
   const description = `${descBody.length > 80 - 15 ? descBody.slice(0, 80 - 16).replace(/[,.·\s]+$/, '') + '.' : descBody} 상담 ${CONTACT.phone}.`;
@@ -902,7 +909,7 @@ export function composeAxis(p: Page) {
   }
 
   return {
-    axis, title, description, lead, eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
+    axis, title, description, lead, h1sub, eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
     specs: [['지역', area], w.spec, ['상담', `${CONTACT.phone} · 문자 ${CONTACT.sms}`]] as [string, string][],
     heroKey: pick(['d', 'e', 'f'], s, 'ax-hero'), baKey: pick(w.ba, s, 'ax-ba'), area, facts: f, sections, dongTable, faq: faqAll,
     cta: w.cta, closing: { heading: pick([`${area} ${label} 상담`, `${label}, 창 사진부터`], s, 'ax-ch'), text: pick(w.closing(c), s, 'ax-ct') },

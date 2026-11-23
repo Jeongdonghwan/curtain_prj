@@ -109,7 +109,7 @@ function AxisPage({ p }: { p: Page }) {
         <div className="wrap"><div className="hero-copy">
           <nav className="crumbs" aria-label="경로"><Link href="/">홈</Link><span>/</span><Link href="/area/">지역</Link><span>/</span>{p.kw}</nav>
           <p className="hero-label">{c.eyebrow}</p>
-          <h1 className="hero-title"><span>{p.kw}</span></h1>
+          <h1 className="hero-title"><span>{p.kw}</span>{' '}<span className="hero-sub">{c.h1sub}</span></h1>
           <p className="hero-lead">{c.lead}</p>
           <Actions />
           <dl className="hero-specs">{c.specs.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
@@ -153,7 +153,7 @@ export default function KeywordPage({ params }: { params: { slug: string } }) {
           <div className="hero-copy">
             <nav className="crumbs" aria-label="경로"><Link href="/">홈</Link><span>/</span><Link href="/area/">지역</Link><span>/</span>{p.kw}</nav>
             <p className="hero-label">{c.eyebrow}</p>
-            <h1 className="hero-title"><span>{p.kw}</span></h1>
+            <h1 className="hero-title"><span>{p.kw}</span>{' '}<span className="hero-sub">{c.h1sub}</span></h1>
             <p className="hero-lead">{c.lead}</p>
             <Actions />
             <dl className="hero-specs">{c.specs.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>

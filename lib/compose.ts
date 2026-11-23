@@ -443,8 +443,19 @@ export function compose(p: Page) {
     rows: dongRows,
   } : undefined;
 
+  // h1 수식어 — 키워드만 있는 h1 대신 이 페이지 사실(단지·방·설치/커튼집 의도)을 붙인다
+  const unit = c0 ? `${c0.name} 같은 단지` : dongLevel ? '우리 집' : `${spot} 같은 동네`;
+  const h1sub = kind === 'install' ? pick([`실측부터 ${rail} 설치까지`, `${f.room} 창 ${thing} 설치 순서`, `${unit} ${rail} 자리 정하는 법`], s, 'h1i')
+    : kind === 'shop' ? pick(['실측·제작 기간·레일 포함 비교', `고르는 기준과 ${unit} 상담`, '커튼집 고를 때 확인할 것'], s, 'h1s')
+      : pick([
+        `${unit} 창에 맞춰 고르기`,
+        `${f.room} 창 사이즈 재는 법과 ${t === 'blind' ? '소재' : '원단'} 고르기`,
+        t === 'blind' ? '창 깊이·소재로 고르는 기준' : '레일포함 풀세트 가격과 제작 기간',
+        `${unit} 실측부터 설치까지`,
+      ], s, 'h1sub');
+
   return {
-    topic: t, facts: f, area, title, description, lead,
+    topic: t, facts: f, area, title, description, lead, h1sub,
     eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
     specs: [['지역', area], SPEC2[p.word] || ['많이 맞추는 곳', f.room], ['상담', `${CONTACT.phone} · 문자 ${CONTACT.sms}`]] as [string, string][],
     intro, region, products, lightOn, baKey, heroKey: pick(['d', 'e', 'f'], s, 'hero'), steps, faq, cases, rooms, types, nearby,
