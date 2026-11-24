@@ -35,7 +35,7 @@ export const FACTS = {
 // 32~38 = 새 축 21단어 16,809쪽을 2026-11-16~22 7일에 (날짜는 data/drip.json extra). 오늘 값은 python -I scripts/drip/drip_status.py data/drip.json. 전체 빌드는 OPEN_WAVE=38
 export const OPEN_WAVE = Number(process.env.OPEN_WAVE || 1);
 // 표기만 다른 페이지(강남/강남구)는 대표 페이지로 canonical + 사이트맵 제외
-export const UPDATED = '2026-11-16'; // content revision date - bump when page text changes
+export const UPDATED = '2026-11-24'; // content revision date - bump when page text changes
 export const MERGE_VARIANTS = true;
 
 export const tel = `tel:${CONTACT.phone.replace(/[^0-9]/g, '')}`;
