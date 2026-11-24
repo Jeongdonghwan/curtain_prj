@@ -3,8 +3,8 @@
 
 export const SITE_URL = process.env.SITE_URL || 'https://curtainblind.co.kr';
 export const BRAND = '커튼명장';
-// title = h1 글자(키워드 + 수식어) | 상호 (2026-11-24). 키워드+수식어 40자 넘으면 수식어를 뺀다.
-export const kwTitle = (kw: string, sub: string) => `${`${kw} ${sub}`.length <= 40 ? `${kw} ${sub}` : kw} | ${BRAND}`;
+// title = h1 글자(키워드 + 수식어) | 상호, 전체 40자 이하(네이버 권장, 2026-11-24). 넘으면 상호를 빼고, 그래도 넘으면 수식어도 뺀다.
+export const kwTitle = (kw: string, sub: string) => { const h = `${kw} ${sub}`.length <= 40 ? `${kw} ${sub}` : kw; return `${h} | ${BRAND}`.length <= 40 ? `${h} | ${BRAND}` : h; };
 export const BRAND_EN = 'CURTAIN MASTER';
 
 export const LINKS = {

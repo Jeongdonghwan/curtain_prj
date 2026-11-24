@@ -19,7 +19,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   if (!p) return {};
   const c = isAxisPage(p) ? composeAxis(p) : compose(p);
   const url = canonicalPath(p);
-  return { title: c.title, description: c.description, alternates: { canonical: url }, openGraph: { title: c.title, description: c.description, url, images: [`/images/ba-${c.baKey}-after.webp`] } };
+  return { title: c.title, description: c.description, alternates: { canonical: url }, openGraph: { siteName: BRAND, title: c.title, description: c.description, url, images: [`/images/ba-${c.baKey}-after.webp`] } };
 }
 
 const Related = ({ p, rel }: { p: Page; rel: ReturnType<typeof related> }) => (
