@@ -5,6 +5,7 @@ import { OPEN_PAGES, getPage, pagePath, pageEncodedPath, canonicalPath, related,
 import { compose } from '../../lib/compose';
 import { composeAxis, isAxisPage, Section } from '../../lib/axes';
 import { breadcrumbJsonLd, faqJsonLd, pageListJsonLd } from '../../lib/jsonld';
+import { BRAND } from '../../lib/site';
 import { Actions, BeforeAfter, CallButton, IconArrow, JsonLd, LightScale, SectionHead } from '../../components/Common';
 
 export const dynamicParams = false;
