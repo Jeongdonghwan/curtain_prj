@@ -3,7 +3,7 @@
 // 사실 근거: data/products.json(공식몰 상품·가격), data/regions-sg.json(주거 형태·창·많이 맞추는 공간), data/dong-apts.json(K-apt 단지: 사용승인·세대·복도·최고층, 행안부 세대).
 // 만들지 않는 것: 창 방향·시공 건수·통계·수상·보증. 단열·결로·차단 효과는 숫자 없이 원리로만 말한다. 블라인드 가격은 쓰지 않는다.
 import { Page, Product, PRODUCTS, ALL_PAGES, OPEN_PAGES, factsOf, aptsOf, Complex } from './data';
-import { BRAND, CONTACT, FACTS } from './site';
+import { BRAND, CONTACT, FACTS, kwTitle } from './site';
 import { j } from './ko';
 import { pick, rotate } from './words';
 
@@ -809,7 +809,7 @@ export function composeAxis(p: Page) {
     `${p.kw} — ${sp}. 실측 상담 ${CONTACT.phone}`,
     `${p.kw} — ${sp.split('·').slice(0, 2).join('·')}. 실측 상담 ${CONTACT.phone}`,
   ].find((d) => d.length <= 80) || `${p.kw} 실측 상담 ${CONTACT.phone}`;
-  const description = desc0.length < 45 ? `${desc0.replace(/(, )?(실측 )?상담 [0-9-]+$|, 전화 [0-9-]+$/, '').replace(/[., ]+$/, '')}. ${BRAND} 맞춤 상담 ${CONTACT.phone}` : desc0;
+  const description = (desc0.length < 45 ? `${desc0.replace(/(, )?(실측 )?상담 [0-9-]+$|, 전화 [0-9-]+$/, '').replace(/[., ]+$/, '')}. ${BRAND} 맞춤 제작 실측 상담 ${CONTACT.phone}` : desc0).replace(/ {2,}/g, " ");
 
   const lead = pick(w.lead(c), s, 'ax-lead');
   const def = w.def(c); def[0] = pick([def[0], w.alt(c)], s, 'ax-alt');
@@ -915,7 +915,7 @@ export function composeAxis(p: Page) {
   }
 
   return {
-    axis, title, description, lead, h1sub, eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
+    axis, title: kwTitle(p.kw, h1sub), description, lead, h1sub, eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
     specs: [['지역', area], w.spec, ['상담', `${CONTACT.phone} · 문자 ${CONTACT.sms}`]] as [string, string][],
     heroKey: pick(['d', 'e', 'f'], s, 'ax-hero'), baKey: pick(w.ba, s, 'ax-ba'), area, facts: f, sections, dongTable, faq: faqAll,
     cta: w.cta, closing: { heading: pick([`${area} ${label} 상담`, `${label}, 창 사진부터`], s, 'ax-ch'), text: pick(w.closing(c), s, 'ax-ct') },

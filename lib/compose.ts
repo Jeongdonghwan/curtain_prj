@@ -3,7 +3,7 @@
 //           data/dong-apts.json(동별 공동주택 단지 — K-apt 단지 기본정보).
 // 하지 않는 것: 없는 할인·없는 보증 기간·출처 없는 숫자, 블라인드 가격(공식몰에 상품이 없어 상담으로 안내).
 import { Page, Product, PRODUCTS, ALL_PAGES, OPEN_PAGES, factsOf, aptsOf } from './data';
-import { BRAND, CONTACT, FACTS, BUSINESS } from './site';
+import { BRAND, CONTACT, FACTS, BUSINESS, kwTitle } from './site';
 import { j } from './ko';
 import { pick, rotate, wordLayer, CTA, STEPS_HEADING, LIGHT_SUB, PRODUCTS_HEADING, REGION_CHECK, SPEC2, type Ctx } from './words';
 
@@ -117,7 +117,7 @@ export function compose(p: Page) {
     `${p.kw} — ${relW.slice(0, 2).join('·')}까지 한 번에 상담. ${f.room} 창 실측, 전화 ${CONTACT.phone}`,
     `${p.kw} — ${relW[0]}까지 상담. ${f.room} 창 실측, 전화 ${CONTACT.phone}`,
   ].find((d) => d.length <= 80) || `${p.kw} 실측 상담 ${CONTACT.phone}`;
-  const description = desc0.length < 45 ? `${desc0.replace(/(, )?(실측 )?상담 [0-9-]+$|, 전화 [0-9-]+$/, '').replace(/[., ]+$/, '')}. ${BRAND} 맞춤 상담 ${CONTACT.phone}` : desc0;
+  const description = (desc0.length < 45 ? `${desc0.replace(/(, )?(실측 )?상담 [0-9-]+$|, 전화 [0-9-]+$/, '').replace(/[., ]+$/, '')}. ${BRAND} 맞춤 제작 실측 상담 ${CONTACT.phone}` : desc0).replace(/ {2,}/g, " ");
 
   // ---- 히어로 ----
   const lead = c0 ? pick([
@@ -464,7 +464,7 @@ export function compose(p: Page) {
       ], s, 'h1sub');
 
   return {
-    topic: t, facts: f, area, title, description, lead, h1sub,
+    topic: t, facts: f, area, description, lead, h1sub,
     eyebrow: `${p.sido === '서울특별시' ? '서울' : '경기'} · ${f.name}`,
     specs: [['지역', area], SPEC2[p.word] || ['많이 맞추는 곳', f.room], ['상담', `${CONTACT.phone} · 문자 ${CONTACT.sms}`]] as [string, string][],
     intro, region, products, lightOn, baKey, heroKey: pick(['d', 'e', 'f'], s, 'hero'), steps, faq, cases, rooms, types, nearby,
@@ -478,6 +478,7 @@ export function compose(p: Page) {
     productsHeading: PRODUCTS_HEADING(p.word, area),
     dongTable,
     ...over,
+    title: kwTitle(p.kw, h1sub),
     ...wover,
   };
 }

@@ -168,3 +168,6 @@ curtainmaster.co.kr(커튼명장)을 바탕으로 한 메인 홈 + 서울·경�
 
 ### h2 키워드 · description 80자 (2026-11-24)
 사용자 지시(노출 잘되는 4곳 실측 — 스킬 programmatic-seo composer-patterns §5-2·§5-3). 절 제목(h2) 앞에 키워드를 붙임(`app/[slug]/page.tsx` 의 `kwT` — 본문 문장은 그대로, 이모지 없음). description 은 45~80자: 키워드 + 관련 키워드 2~3개 + 단지·방 사실 + 전화(`lib/compose.ts`·`lib/axes.ts`). 열린 24,879쪽 80자 초과 0·45자 미만 0·중복 0.
+
+## title 규칙 (2026-11-24)
+title = `{키워드} {h1 수식어} | 커튼명장` — 앞부분은 h1 글자와 같다(`lib/site.ts` `kwTitle`, 키워드+수식어 40자 넘으면 수식어 생략). og:title·RSS 도 같은 값. 점검 `OPEN_WAVE=38 npx tsx scripts/meta_check.ts`(3분쯤): 열린 24,879쪽 title 중복 0·60자 초과 0, 수식어 빠진 것 544쪽(단지 이름이 긴 동). 같은 날 description 45자 미만 58쪽·겹친 공백 30쪽도 고쳐 범위 밖 0.
